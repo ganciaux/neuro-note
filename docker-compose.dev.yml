@@ -1,0 +1,41 @@
+# docker-compose.dev.yml
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev   # on fera un Dockerfile dev séparé
+    container_name: neuro-note-backend
+    command: npm run start:dev
+    env_file: ./backend/.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules  # évite d’écraser node_modules dans l’image
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: neuro-note-frontend
+    command: npx ng serve --host 0.0.0.0 --port 4200 --poll 2000
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules  # idem pour Angular
+
+  postgres:
+    image: postgres:15
+    container_name: neuro-note-postgres
+    environment:
+      POSTGRES_USER: neuro
+      POSTGRES_PASSWORD: neuro
+      POSTGRES_DB: neuronote
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker-data/postgres:/var/lib/postgresql/data
+      - ./backend/db-init:/docker-entrypoint-initdb.d

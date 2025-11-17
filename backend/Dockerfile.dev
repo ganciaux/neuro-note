@@ -1,0 +1,17 @@
+FROM node:20
+
+WORKDIR /app
+
+# Copie uniquement les fichiers manifestes pour l'installation
+COPY package*.json ./
+
+# Installation propre (évite de réinstaller à chaque build)
+RUN npm install --legacy-peer-deps
+
+# Copie tout le projet
+COPY . .
+
+EXPOSE 3000
+
+# Start en mode watch avec polling pour Windows
+CMD ["npm", "run", "start:dev"]
