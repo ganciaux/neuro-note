@@ -9,7 +9,7 @@ docker compose -f docker-compose.dev.yml up --build
 docker compose -f docker-compose.dev.yml up
 
 #bash
-docker exec -it neuro-note-postgres psql -U neuro -d neuronote
-docker compose exec backend bash
-docker compose exec backend npx ts-node scripts/seed.ts db-init/02_seed.sql
-docker compose exec backend npm run seed -- db-init/02_seed.sql
+docker exec -it dev-neuro-note-postgres psql -U neuro -d neuronote
+docker compose -f docker-compose.dev.yml exec backend bash
+docker compose -f docker-compose.dev.yml exec backend npx ts-node scripts/seed.ts db-init/02_seed.sql
+docker compose -f docker-compose.dev.yml exec backend npm run seed -- db-init/02_seed.sql

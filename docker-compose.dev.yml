@@ -4,9 +4,9 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev   # on fera un Dockerfile dev séparé
-    container_name: neuro-note-backend
+    container_name: dev-neuro-note-backend
     command: npm run start:dev
-    env_file: ./backend/.env
+    env_file: ./backend/.env_dev
     ports:
       - "3000:3000"
     volumes:
@@ -19,7 +19,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
-    container_name: neuro-note-frontend
+    container_name: dev-neuro-note-frontend
     command: npx ng serve --host 0.0.0.0 --port 4200 --poll 2000
     ports:
       - "4200:4200"
@@ -29,13 +29,16 @@ services:
 
   postgres:
     image: postgres:15
-    container_name: neuro-note-postgres
+    container_name: dev-neuro-note-postgres
     environment:
       POSTGRES_USER: neuro
       POSTGRES_PASSWORD: neuro
       POSTGRES_DB: neuronote
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - ./docker-data/postgres:/var/lib/postgresql/data
+      - dev-postgres-data:/var/lib/postgresql/data
       - ./backend/db-init:/docker-entrypoint-initdb.d
+      
+volumes:
+  dev-postgres-data:

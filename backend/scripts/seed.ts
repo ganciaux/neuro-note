@@ -9,11 +9,11 @@ if (!fileName) {
 }
 
 const client = new Client({
-  host: process.env.DB_HOST || 'neuro-note-postgres',
-  port: Number(process.env.DB_PORT) || 5432,
-  user: process.env.DB_USER || 'neuro',
-  password: process.env.DB_PASSWORD || 'neuro',
-  database: process.env.DB_NAME || 'neuronote',
+  host: process.env.DATABASE_HOST || 'postgres',
+  port: Number(process.env.DATABASE_PORT) || 5432,
+  user: process.env.DATABASE_USER || 'neuro',
+  password: process.env.DATABASE_PASSWORD || 'neuro',
+  database: process.env.DATABASE_NAME || 'neuronote',
 });
 
 const sqlPath = path.join(__dirname, '..', fileName);
