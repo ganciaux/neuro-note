@@ -1,0 +1,12 @@
+https://www.conventionalcommits.org/en/v1.0.0/#specification
+feat: nouvelle fonctionnalité
+fix: correction de bug
+docs: documentation
+style: mise en forme
+refactor: refacto interne
+perf: optimisation
+test: tests
+build: système de build
+ci: intégration continue
+chore: maintenance
+revert: rollback
