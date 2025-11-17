@@ -10,3 +10,9 @@ build: système de build
 ci: intégration continue
 chore: maintenance
 revert: rollback
+
+git rebase -i <commit>
+reword 
+...
+=> git push --force-with-lease
+
