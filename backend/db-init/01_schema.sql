@@ -1,25 +1,25 @@
--- Création d'une table utilisateur
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+-- ============================================
+-- ENUM TYPES
+-- ============================================
+CREATE TABLE enum_types (
+  id SERIAL PRIMARY KEY,
+  type VARCHAR(64) NOT NULL,
+  code VARCHAR(128) NOT NULL UNIQUE,
+  short_code VARCHAR(64) NOT NULL,
+  label VARCHAR(256) NOT NULL,
+  UNIQUE (type, short_code)
 );
 
--- Création d'une table notes
-CREATE TABLE IF NOT EXISTS notes (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id),
-    title VARCHAR(200) NOT NULL,
-    content TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
+-- ============================================
+-- USERS
+-- ============================================
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(256) UNIQUE NOT NULL,
+  password_hash VARCHAR(256) NOT NULL,
+  role_code VARCHAR(128) REFERENCES enum_types(code),
+  full_name VARCHAR(256) NOT NULL,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now(),
+  deleted_at TIMESTAMP
 );
-
--- Insérer quelques valeurs par défaut
-INSERT INTO users (name, email) VALUES
-('Alice', 'alice@test.com'),
-('Bob', 'bob@test.com');
-
-INSERT INTO notes (user_id, title, content) VALUES
-(1, 'Première note', 'Contenu de la première note'),
-(2, 'Deuxième note', 'Contenu de la deuxième note');
