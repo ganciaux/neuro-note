@@ -7,7 +7,9 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { logError } from '../../../common/utils/log-error.util';
 import { v4 as uuidv4 } from 'uuid';
+import { appConfig } from '../../../config';
 
 interface ApiErrorResponse {
   type: string;
@@ -24,7 +26,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
   private readonly isDebug: boolean;
 
-  constructor(isDebug: boolean = process.env.NODE_ENV !== 'production') {
+  constructor(isDebug: boolean = appConfig.isDebug) {
     this.isDebug = isDebug;
   }
 
@@ -42,14 +44,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const response = exception.getResponse();
 
-      // response peut être string ou object
       if (typeof response === 'string') {
         title = response;
       } else if (typeof response === 'object') {
-        title = (response as any).message || exception.message;
-        detail = (response as any).message && Array.isArray((response as any).message)
-          ? (response as any).message
-          : response;
+
+        if (Array.isArray((response as any).message)) {
+          detail = (response as any).message;
+          title = 'Validation error';
+        } else {
+          title = (response as any).message || exception.message;
+          detail = response;
+        }
       } else {
         title = exception.message;
       }
@@ -68,27 +73,27 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       path: req.url,
     };
 
-    if (detail) {
-      payload.detail = detail;
-      // si debug et qu’il y a un target dans un des éléments
-      if (this.isDebug && Array.isArray(detail) && detail.length > 0 && (detail[0] as any).target) {
-        payload.detail = {
-          target: (detail[0] as any).target,
-          errors: detail.map((d: any) => {
-            const copy = { ...d };
-            delete copy.target;
-            return copy;
-          }),
-        };
+    if (detail && Array.isArray(detail) && detail.length > 0 && (detail[0] as any).target) {
+      const errors = detail.map((d: any) => {
+        const copy = { ...d };
+        delete copy.target; 
+        return copy;
+      });
+
+      if (this.isDebug) {
+        payload.detail = { target: (detail[0] as any).target, errors };
+      } else {
+        payload.detail = { errors };
       }
+    } else if (detail) {
+      payload.detail = detail;
     }
 
-    // Log de l'erreur
-    this.logger.error(
-      `Error [${status}] ${JSON.stringify(payload)}`,
-      (exception as any)?.stack,
-      'GlobalExceptionFilter',
-    );
+    logError(exception, 'GlobalExceptionFilter', {
+      payload,
+      method: req.method,
+      url: req.url,
+    });
 
     res.status(status).json(payload);
   }

@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception/global-exception.filter';
@@ -21,7 +21,7 @@ async function bootstrap() {
         enableImplicitConversion: true,
       },
       stopAtFirstError: true,
-      exceptionFactory: (errors) => errors,
+      exceptionFactory: (errors) => new BadRequestException(errors),
     }),
   );
 
