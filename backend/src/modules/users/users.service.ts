@@ -1,11 +1,10 @@
 import { ConflictException, Injectable, NotFoundException  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { CatchTypeOrmError } from 'src/common/decorators/catch-typeorm-error.decorator';
+import { CatchTypeOrmError } from '../../common/decorators/catch-typeorm-error.decorator';
 
 @Injectable()
 export class UsersService {
@@ -50,7 +49,7 @@ export class UsersService {
     }
     return user;
   }
-  
+
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepo.findByEmail(email);
   }
