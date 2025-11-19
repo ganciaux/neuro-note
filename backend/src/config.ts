@@ -8,3 +8,9 @@ export const dbBaseConfig = {
   password: process.env.DATABASE_PASSWORD || 'neuro',
   database: process.env.DATABASE_NAME || 'neuronote',
 };
+
+export const appConfig = {
+  port: Number(process.env.PORT) || 3000,
+  nodeEnv: process.env.NODE_ENV || 'development',
+  isDebug: (process.env.NODE_ENV || 'development') !== 'production',
+};
