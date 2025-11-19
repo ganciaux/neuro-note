@@ -5,6 +5,7 @@ import { UsersController } from './users.controller';
 import { User } from './entities/user.entity';
 import { EnumType } from '../enum-types/entities/enum-type.entity';
 import { EnumTypesModule } from '../enum-types/enum-types.module';
+import { UsersRepository } from './users.repository';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { EnumTypesModule } from '../enum-types/enum-types.module';
     EnumTypesModule
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, UsersRepository],
+  exports: [UsersRepository]
 })
 export class UsersModule {}

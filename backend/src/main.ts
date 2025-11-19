@@ -1,10 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './common/filters/global-exception/global-exception/global-exception.filter';
+import { GlobalExceptionFilter } from './common/filters/global-exception/global-exception.filter';
 import { appConfig } from './config';
-import e from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
