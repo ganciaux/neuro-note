@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEnumTypeDto } from './dto/create-enum-type.dto';
-import { UpdateEnumTypeDto } from './dto/update-enum-type.dto';
+import { CreateEnumTypeDto } from '../dto/create-enum-type.dto';
+import { UpdateEnumTypeDto } from '../dto/update-enum-type.dto';
 
 @Injectable()
 export class EnumTypesService {

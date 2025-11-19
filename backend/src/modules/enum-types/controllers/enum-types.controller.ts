@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { EnumTypesService } from './enum-types.service';
-import { CreateEnumTypeDto } from './dto/create-enum-type.dto';
-import { UpdateEnumTypeDto } from './dto/update-enum-type.dto';
+import { EnumTypesService } from '../services/enum-types.service';
+import { CreateEnumTypeDto } from '../dto/create-enum-type.dto';
+import { UpdateEnumTypeDto } from '../dto/update-enum-type.dto';
 
 @Controller('enum-types')
 export class EnumTypesController {

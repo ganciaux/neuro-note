@@ -1,10 +1,10 @@
 import { ConflictException, Injectable, NotFoundException  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsersRepository } from './users.repository';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
-import { CatchTypeOrmError } from '../../common/decorators/catch-typeorm-error.decorator';
+import { UsersRepository } from '../repositories/users.repository';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
+import { User } from '../entities/user.entity';
+import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
 
 @Injectable()
 export class UsersService {
