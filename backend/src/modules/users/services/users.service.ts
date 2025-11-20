@@ -4,23 +4,23 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { UsersRepository } from '../repositories/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../entities/user.entity';
 import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
+import { UserResponseDto } from '../dto/user-response.dto';
+import { toDto, toDtoArray } from '../../../common/utils/transform-to-dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
     private readonly userRepo: UsersRepository,
   ) {}
 
   @CatchTypeOrmError()
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const existing = await this.userRepo.findByEmail(createUserDto.email);
     if (existing) {
       throw new ConflictException(
@@ -35,15 +35,19 @@ export class UsersService {
       passwordHash: hashedPassword,
     });
 
-    return this.userRepo.save(user);
+    const savedUser = await this.userRepo.save(user);
+
+    return toDto(UserResponseDto, savedUser);
   }
 
   @CatchTypeOrmError()
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
     const user = await this.userRepo.findOneBy({ id });
     if (!user) throw new NotFoundException(`User #${id} not found`);
     Object.assign(user, updateUserDto);
-    return this.userRepo.save(user);
+    const updatedUser = await this.userRepo.save(user);
+
+    return toDto(UserResponseDto, updatedUser);
   }
 
   @CatchTypeOrmError()
@@ -53,52 +57,45 @@ export class UsersService {
     await this.userRepo.delete(id);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userRepo.find();
+  async findAll(): Promise<UserResponseDto[]> {
+    const users = await this.userRepo.find();
+    return toDtoArray(UserResponseDto, users);
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<UserResponseDto> {
     const user = await this.userRepo.findOneBy({ id });
     if (!user) {
       throw new NotFoundException(`User #${id} not found`);
     }
-    return user;
+    return toDto(UserResponseDto, user);
   }
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepo.findByEmail(email);
   }
 
-  async findActiveAdmins(): Promise<User[]> {
-    return this.userRepo.findActiveAdmins();
+  async findByEmailWithPassword(email: string): Promise<User | null> {
+    return this.userRepo.findByEmailWithPassword(email);
   }
 
-  async search(filters: { email?: string; name?: string }): Promise<User[]> {
-    return this.userRepo.search(filters);
+  async findActiveAdmins(): Promise<UserResponseDto[]> {
+    const admins = await this.userRepo.findActiveAdmins();
+    return toDtoArray(UserResponseDto, admins);
   }
 
-  async searchTerm(term: string): Promise<User[]> {
-    return this.userRepo.searchTerm(term);
+  async search(filters: { email?: string; name?: string }): Promise<UserResponseDto[]> {
+    const users = await this.userRepo.search(filters);
+    return toDtoArray(UserResponseDto, users);
+  }
+
+  async searchTerm(term: string): Promise<UserResponseDto[]> {
+    const users = await this.userRepo.searchTerm(term);
+    return toDtoArray(UserResponseDto, users);
   }
 
   async validatePassword(user: User, password: string): Promise<boolean> {
+    if (!user.passwordHash) throw new Error('Password hash missing');
     return bcrypt.compare(password, user.passwordHash);
   }
 
-  async login(email: string, password: string): Promise<User> {
-    const user = await this.userRepo.findByEmailWithPassword(email);
-
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const isValid = await bcrypt.compare(password, user.passwordHash);
-    if (!isValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    delete (user as any).passwordHash;
-
-    return user;
-  }
 }
