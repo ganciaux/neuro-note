@@ -1,8 +1,10 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- ============================================
 -- ENUM TYPES
 -- ============================================
 CREATE TABLE enum_types (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   type VARCHAR(64) NOT NULL,
   code VARCHAR(128) NOT NULL UNIQUE,
   short_code VARCHAR(64) NOT NULL,
@@ -14,7 +16,8 @@ CREATE TABLE enum_types (
 -- USERS
 -- ============================================
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  slug VARCHAR(64) UNIQUE NOT NULL,
   email VARCHAR(256) UNIQUE NOT NULL,
   password_hash VARCHAR(256) NOT NULL,
   role_code VARCHAR(128) REFERENCES enum_types(code),

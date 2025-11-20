@@ -5,12 +5,15 @@ import {
   ManyToOne,
   JoinColumn,
   DeleteDateColumn,
+  BeforeInsert,
 } from 'typeorm';
+import slugify from 'slugify';
+import { nanoid } from 'nanoid';
 import { EnumType } from '../../enum-types/entities/enum-type.entity';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column({ length: 256, unique: true })
@@ -37,4 +40,13 @@ export class User {
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deleted_at?: Date;
+
+  @Column({ unique: true })
+  slug: string;
+
+  @BeforeInsert()
+  generateSlug() {
+    const baseSlug = slugify(this.fullName, { lower: true });
+    this.slug = `${baseSlug}-${nanoid(4)}`;
+  }
 }

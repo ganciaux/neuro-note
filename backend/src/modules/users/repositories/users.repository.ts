@@ -20,6 +20,10 @@ export class UsersRepository extends Repository<User> {
       .getOne();
   }
 
+  async findBySlug(slug: string): Promise<User | null> {
+    return this.findOneBy({ slug });
+  }
+
   async findActiveAdmins(): Promise<User[]> {
     return this.createQueryBuilder('u')
       .where('u.roleCode = :role', { role: 'admin' })

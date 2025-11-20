@@ -23,6 +23,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @Get(':slug')
+    async getUserBySlug(@Param('slug') slug: string): Promise<UserResponseDto> {
+    return this.usersService.findBySlug(slug);
+  }
+
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);

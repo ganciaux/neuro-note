@@ -78,6 +78,14 @@ export class UsersService {
     return this.userRepo.findByEmailWithPassword(email);
   }
 
+  async findBySlug(slug: string): Promise<UserResponseDto> {
+    const user = await this.userRepo.findBySlug(slug);
+    if (!user) {
+      throw new NotFoundException(`User with slug ${slug} not found`);
+    }
+    return toDto(UserResponseDto, user);
+  }
+
   async findActiveAdmins(): Promise<UserResponseDto[]> {
     const admins = await this.userRepo.findActiveAdmins();
     return toDtoArray(UserResponseDto, admins);

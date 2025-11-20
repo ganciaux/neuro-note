@@ -8,5 +8,5 @@ INSERT INTO enum_types(type, code, short_code, label) VALUES
 -- ===============================
 -- USERS
 -- ===============================
-INSERT INTO users(email, password_hash, role_code, full_name) VALUES
-('admin@example.com', 'hash1', 'user_role_admin', 'Admin User');
+INSERT INTO users(email, slug, password_hash, role_code, full_name) VALUES
+('admin@example.com', 'admin-0000', 'hash1', 'user_role_admin', 'Admin User');
