@@ -1,5 +1,11 @@
-import { ConflictException, Injectable, NotFoundException  } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { UsersRepository } from '../repositories/users.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -17,9 +23,18 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     const existing = await this.userRepo.findByEmail(createUserDto.email);
     if (existing) {
-      throw new ConflictException(`Email ${createUserDto.email} already exists`);
+      throw new ConflictException(
+        `Email ${createUserDto.email} already exists`,
+      );
     }
-    const user = this.userRepo.create(createUserDto);
+
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    const user = this.userRepo.create({
+      ...createUserDto,
+      passwordHash: hashedPassword,
+    });
+
     return this.userRepo.save(user);
   }
 
@@ -64,5 +79,26 @@ export class UsersService {
 
   async searchTerm(term: string): Promise<User[]> {
     return this.userRepo.searchTerm(term);
+  }
+
+  async validatePassword(user: User, password: string): Promise<boolean> {
+    return bcrypt.compare(password, user.passwordHash);
+  }
+
+  async login(email: string, password: string): Promise<User> {
+    const user = await this.userRepo.findByEmailWithPassword(email);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    delete (user as any).passwordHash;
+
+    return user;
   }
 }

@@ -13,6 +13,13 @@ export class UsersRepository extends Repository<User> {
     return this.findOne({ where: { email } });
   }
 
+  async findByEmailWithPassword(email: string): Promise<User | null> {
+    return this.createQueryBuilder('u')
+      .addSelect('u.passwordHash')
+      .where('u.email = :email', { email })
+      .getOne();
+  }
+
   async findActiveAdmins(): Promise<User[]> {
     return this.createQueryBuilder('u')
       .where('u.roleCode = :role', { role: 'admin' })
