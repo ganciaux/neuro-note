@@ -8,6 +8,8 @@ import { appConfig } from './config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix(appConfig.apiPrefix);
+
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   app.useGlobalFilters(new GlobalExceptionFilter(appConfig.isDebug));
