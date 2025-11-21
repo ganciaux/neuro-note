@@ -2,7 +2,6 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UsersRepository } from '../repositories/users.repository';
@@ -41,7 +40,7 @@ export class UsersService {
   }
 
   @CatchTypeOrmError()
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
     const user = await this.userRepo.findOneBy({ id });
     if (!user) throw new NotFoundException(`User #${id} not found`);
     Object.assign(user, updateUserDto);
@@ -51,18 +50,13 @@ export class UsersService {
   }
 
   @CatchTypeOrmError()
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const user = await this.userRepo.findOneBy({ id });
     if (!user) throw new NotFoundException(`User #${id} not found`);
     await this.userRepo.delete(id);
   }
 
-  async findAll(): Promise<UserResponseDto[]> {
-    const users = await this.userRepo.find();
-    return toDtoArray(UserResponseDto, users);
-  }
-
-  async findOne(id: number): Promise<UserResponseDto> {
+  async findOne(id: string): Promise<UserResponseDto> {
     const user = await this.userRepo.findOneBy({ id });
     if (!user) {
       throw new NotFoundException(`User #${id} not found`);
@@ -70,12 +64,9 @@ export class UsersService {
     return toDto(UserResponseDto, user);
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return this.userRepo.findByEmail(email);
-  }
-
-  async findByEmailWithPassword(email: string): Promise<User | null> {
-    return this.userRepo.findByEmailWithPassword(email);
+  async findAll(): Promise<UserResponseDto[]> {
+    const users = await this.userRepo.find();
+    return toDtoArray(UserResponseDto, users);
   }
 
   async findBySlug(slug: string): Promise<UserResponseDto> {
@@ -106,4 +97,11 @@ export class UsersService {
     return bcrypt.compare(password, user.passwordHash);
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepo.findByEmail(email);
+  }
+
+  async findByEmailWithPassword(email: string): Promise<User | null> {
+    return this.userRepo.findByEmailWithPassword(email);
+  }
 }

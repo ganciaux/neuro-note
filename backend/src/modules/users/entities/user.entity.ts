@@ -14,7 +14,7 @@ import { EnumType } from '../../enum-types/entities/enum-type.entity';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ length: 256, unique: true })
   email: string;
