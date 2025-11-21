@@ -16,3 +16,9 @@ docker exec -it dev-neuro-note-postgres psql -U neuro -d neuronote
 #typeorm
 docker compose -f docker-compose.dev.yml exec backend npm run typeorm:generate -- src/migrations/InitSchema
 docker compose -f docker-compose.dev.yml exec backend npm run typeorm:migrate
+
+#docker
+./scripts/docker.sh           # reset-build dev (default)
+./scripts/docker.sh prod      # reset-build prod
+./scripts/docker.sh dev up    # start dev without following logs
+./scripts/docker.sh prod logs # follow logs for prod only
