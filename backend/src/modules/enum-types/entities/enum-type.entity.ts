@@ -3,8 +3,8 @@ import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 @Entity('enum_types')
 @Unique(['type', 'shortCode'])
 export class EnumType {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ length: 64 })
   type: string;

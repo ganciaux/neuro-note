@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EnumTypesController } from './enum-types.controller';
+import { EnumTypesController } from '../controllers/enum-types.controller';
 import { EnumTypesService } from '../services/enum-types.service';
 
 describe('EnumTypesController', () => {

@@ -5,7 +5,7 @@ import { JwtPayload } from '../models';
 import { LoginResponseDto } from '../dto/login-response.dto';
 import { toDto } from '../../../common/utils/transform-to-dto';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
-import { User } from 'src/modules/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {

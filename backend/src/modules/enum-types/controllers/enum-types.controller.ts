@@ -1,34 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { EnumTypesService } from '../services/enum-types.service';
-import { CreateEnumTypeDto } from '../dto/create-enum-type.dto';
-import { UpdateEnumTypeDto } from '../dto/update-enum-type.dto';
+import { EnumTypeResponseDto } from '../dto/enum-types-response.dto';
 
-@Controller('enum-types')
+@Controller('enums')
 export class EnumTypesController {
-  constructor(private readonly enumTypesService: EnumTypesService) {}
+  constructor(private readonly enumService: EnumTypesService) {}
 
-  @Post()
-  create(@Body() createEnumTypeDto: CreateEnumTypeDto) {
-    return this.enumTypesService.create(createEnumTypeDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.enumTypesService.findAll();
+  @Get('type/:type')
+  findByType(@Param('type') type: string): Promise<EnumTypeResponseDto[]> {
+    return this.enumService.findByType(type);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.enumTypesService.findOne(+id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<EnumTypeResponseDto> {
+    return this.enumService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEnumTypeDto: UpdateEnumTypeDto) {
-    return this.enumTypesService.update(+id, updateEnumTypeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.enumTypesService.remove(+id);
+  @Get()
+  findAll(): Promise<EnumTypeResponseDto[]> {
+    return this.enumService.findAll();
   }
 }
