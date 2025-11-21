@@ -11,7 +11,7 @@ import { jwtConfig } from '../../config';
     UsersModule,
     JwtModule.register({
       secret: jwtConfig.secret,
-      signOptions: { expiresIn: jwtConfig.expiration.value },
+      signOptions: { expiresIn: jwtConfig.expiration },
     }),
   ],
   controllers: [AuthController],

@@ -14,22 +14,20 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string):Promise<User> {
+  async validateUser(email: string, password: string): Promise<User> {
     const user = await this.usersService.findByEmailWithPassword(email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const isValid = await this.usersService.validatePassword(user, password);
     if (!isValid) throw new UnauthorizedException('Invalid credentials');
 
-    delete (user as any).passwordHash;
-
     return user;
   }
 
-  async login(email: string, password: string):Promise<LoginResponseDto> {
+  async login(email: string, password: string): Promise<LoginResponseDto> {
     const user = await this.validateUser(email, password);
 
-    const payload:JwtPayload = {
+    const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       role: user.roleCode,
@@ -41,7 +39,7 @@ export class AuthService {
     };
   }
 
-  async verifyToken(token: string): Promise<JwtPayload> {
+  verifyToken(token: string): JwtPayload {
     return this.jwtService.verify<JwtPayload>(token);
   }
 }

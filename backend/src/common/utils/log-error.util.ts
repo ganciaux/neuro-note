@@ -6,14 +6,15 @@ export interface LogErrorPayload {
   [key: string]: any;
 }
 
-export function logError(
-  exception: unknown,
-  context: string,
-  payload?: LogErrorPayload,
-) {
-  const status = (exception as any)?.status || 'UNKNOWN';
-  const message = (exception as any)?.message || exception;
-  const stack = (exception as any)?.stack || null;
+export function logError(exception: unknown, context: string, payload?: LogErrorPayload) {
+  const status: string | number | undefined = 'UNKNOWN';
+  let message: string = exception;
+  let stack: string | null = null;
+
+  if (exception instanceof Error) {
+    message = exception.message;
+    stack = exception.stack ?? null;
+  }
 
   const logPayload = {
     status,

@@ -47,7 +47,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       if (typeof response === 'string') {
         title = response;
       } else if (typeof response === 'object') {
-
         if (Array.isArray((response as any).message)) {
           detail = (response as any).message;
           title = 'Validation error';
@@ -73,15 +72,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       path: req.url,
     };
 
-    if (detail && Array.isArray(detail) && detail.length > 0 && (detail[0] as any).target) {
+    if (detail && Array.isArray(detail) && detail.length > 0 && detail[0].target) {
       const errors = detail.map((d: any) => {
         const copy = { ...d };
-        delete copy.target; 
+        delete copy.target;
         return copy;
       });
 
       if (this.isDebug) {
-        payload.detail = { target: (detail[0] as any).target, errors };
+        payload.detail = { target: detail[0].target, errors };
       } else {
         payload.detail = { errors };
       }

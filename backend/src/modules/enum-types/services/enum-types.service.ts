@@ -4,7 +4,8 @@ import { UpdateEnumTypeDto } from '../dto/update-enum-type.dto';
 
 @Injectable()
 export class EnumTypesService {
-  create(createEnumTypeDto: CreateEnumTypeDto) {
+  create(_createEnumTypeDto: CreateEnumTypeDto) {
+    if (!_createEnumTypeDto) throw new Error('Missing createEnumTypeDto');
     return 'This action adds a new enumType';
   }
 
@@ -16,7 +17,8 @@ export class EnumTypesService {
     return `This action returns a #${id} enumType`;
   }
 
-  update(id: number, updateEnumTypeDto: UpdateEnumTypeDto) {
+  update(id: number, _updateEnumTypeDto: UpdateEnumTypeDto) {
+    if (!_updateEnumTypeDto) throw new Error('Missing updateEnumTypeDto');
     return `This action updates a #${id} enumType`;
   }
 

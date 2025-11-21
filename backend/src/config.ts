@@ -1,4 +1,3 @@
-import type { StringValue } from "ms";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,7 +16,7 @@ export const appConfig = {
   isDebug: (process.env.NODE_ENV || 'development') !== 'production',
 };
 
-export const jwtConfig = {
+export const jwtConfig: { secret: string; expiration: number } = {
   secret: process.env.JWT_SECRET || 'dev_secret_change_me',
-  expiration: { value: process.env.JWT_EXPIRATION || '1d' } as unknown as StringValue,
+  expiration: Number(process.env.JWT_EXPIRATION || 3600),
 };

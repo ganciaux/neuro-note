@@ -3,11 +3,7 @@ import { QueryFailedError } from 'typeorm';
 import { logError } from '../utils/log-error.util';
 
 export function CatchTypeOrmError() {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const original = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -27,8 +23,11 @@ export function CatchTypeOrmError() {
             message = errMessage;
           }
         }
-        
-        logError(exception, 'CatchTypeOrmError', { method: propertyKey, message });
+
+        logError(exception, 'CatchTypeOrmError', {
+          method: propertyKey,
+          message,
+        });
 
         if (status === 'CONFLICT') throw new ConflictException(message);
         if (status === 'BAD_REQUEST') throw new BadRequestException(message);

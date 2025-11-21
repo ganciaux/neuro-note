@@ -8,12 +8,9 @@ import { EnumTypesModule } from '../enum-types/enum-types.module';
 import { UsersRepository } from './repositories/users.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User, EnumType]),
-    EnumTypesModule
-  ],
+  imports: [TypeOrmModule.forFeature([User, EnumType]), EnumTypesModule],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
-  exports: [UsersRepository, UsersService]
+  exports: [UsersRepository, UsersService],
 })
 export class UsersModule {}
