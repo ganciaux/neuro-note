@@ -1,0 +1,511 @@
+{
+	"info": {
+		"_postman_id": "f8587fc1-9a73-458d-bbe2-900bb4f0493f",
+		"name": "Neuro-note",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12964862"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "me",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url }}:{{ port}}/{{ api}}/auth/me",
+							"host": [
+								"{{url }}"
+							],
+							"port": "{{ port}}",
+							"path": [
+								"{{ api}}",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();",
+									"",
+									"pm.environment.set(\"jwt\", res.accessToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ghislain@anciaux.fr\",\n    \"password\":\"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url }}:{{ port}}/{{ api}}/auth/login",
+							"host": [
+								"{{url }}"
+							],
+							"port": "{{ port}}",
+							"path": [
+								"{{ api}}",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Patients",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titleCode\": \"patient_title_mr\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"birthDate\": \"1985-04-12T00:00:00.000Z\",\n    \"email\": \"john@example.com\",\n    \"phone\":\"1234\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ghislain@anciaux.fr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url }}:{{ port}}/{{ api}}/patients/{{patient_uuid}}",
+							"host": [
+								"{{url }}"
+							],
+							"port": "{{ port}}",
+							"path": [
+								"{{ api}}",
+								"patients",
+								"{{patient_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url }}:{{ port}}/{{ api}}/patients/{{patient_uuid}}",
+							"host": [
+								"{{url }}"
+							],
+							"port": "{{ port}}",
+							"path": [
+								"{{ api}}",
+								"patients",
+								"{{patient_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();",
+									"",
+									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
+									"if (Array.isArray(res) && res.length > 0) {",
+									"    pm.environment.set(\"patient_uuid\", res[0].id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ghislain2@anciaux.fr\",\n    \"password\":\"12345678\",\n    \"fullName\": \"Admin User\",\n    \"roleCode\": \"user_role_admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ghislain1@anciaux.fr\",\n    \"password\":\"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users/{{user_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users",
+								"{{user_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users/{{user_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users",
+								"{{user_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();",
+									"",
+									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
+									"if (Array.isArray(res) && res.length > 0) {",
+									"    pm.environment.set(\"user_uuid\", res[0].id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url }}:{{port}}/{{api}}/users",
+							"host": [
+								"{{url }}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Enum",
+			"item": [
+				{
+					"name": "enum by type",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/enums/type/{{enum_types_type}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"enums",
+								"type",
+								"{{enum_types_type}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enum by  id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ghislain@.anciaux.fr\",\n    \"password\":\"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url }}:{{ port}}/{{ api}}/enums/{{enum_types_uuid}}",
+							"host": [
+								"{{url }}"
+							],
+							"port": "{{ port}}",
+							"path": [
+								"{{ api}}",
+								"enums",
+								"{{enum_types_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enum all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();",
+									"",
+									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
+									"if (Array.isArray(res) && res.length > 0) {",
+									"    pm.environment.set(\"enum_types_uuid\", res[0].id);",
+									"    pm.environment.set(\"enum_types_type\", res[0].type);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/enums",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"enums"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
