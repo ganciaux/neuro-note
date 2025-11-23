@@ -36,7 +36,7 @@ CREATE TABLE patients (
   title_code VARCHAR(128) REFERENCES enum_types(code),
   first_name VARCHAR(256) NOT NULL,
   last_name VARCHAR(256) NOT NULL,
-  search_last_name VARCHAR(256) NOT NULL,
+  search_name VARCHAR(256) NOT NULL,
   birth_date DATE,
   phone VARCHAR(256) NOT NULL,
   email VARCHAR(256) NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE patients (
 CREATE TABLE addresses (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   entity_type VARCHAR(128) REFERENCES enum_types(code),
-  entity_id UUID NOT NULL
+  entity_id UUID NOT NULL,
   type_code VARCHAR(128) REFERENCES enum_types(code),
   street VARCHAR(256) NOT NULL,
   postal_code VARCHAR(256) NOT NULL,

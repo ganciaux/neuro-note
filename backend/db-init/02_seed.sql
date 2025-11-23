@@ -17,5 +17,5 @@ INSERT INTO users(email, slug, password_hash, role_code, full_name) VALUES
 -- ===============================
 -- PATIENTS
 -- ===============================
-INSERT INTO patients(title_code, first_name, last_name, search_last_name, birth_date, phone, email) VALUES
-('patient_title_mr', 'John', 'Doe', 'DOE', '1985-04-12', '+352123456', 'john@example.com');
+INSERT INTO patients(title_code, first_name, last_name, search_name, slug, birth_date, phone, email) VALUES
+('patient_title_mr', 'John', 'Doe', 'johndoe', 'john-doe', '1985-04-12', '+352123456', 'john@example.com');
