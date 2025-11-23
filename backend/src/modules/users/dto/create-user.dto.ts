@@ -1,18 +1,28 @@
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
 import { IsEnumType } from '../../../common/validators/is-enum-type.validator';
+import { Trim } from '../../../common/helpers/trim.helper';
 
 export class CreateUserDto {
   @IsEmail()
+  @Trim()
+  @MaxLength(256)
   email: string;
 
   @IsString()
-  @Length(8, 64)
+  @Trim()
+  @MinLength(8)
+  @MaxLength(64)
   password: string;
 
   @IsString()
+  @Trim()
   @IsEnumType('user_role', { message: 'roleCode invalide' })
+  @MaxLength(128)
   roleCode: string;
 
   @IsString()
+  @Trim()
+  @MinLength(1)
+  @MaxLength(256)
   fullName: string;
 }
