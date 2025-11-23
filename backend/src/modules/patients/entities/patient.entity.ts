@@ -1,6 +1,14 @@
 import { nanoid } from 'nanoid';
 import slugify from 'slugify';
-import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn, BeforeInsert } from 'typeorm';
+import { sanitize } from '../../../common/utils/sanitize.utils';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  DeleteDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
+} from 'typeorm';
 
 @Entity('patients')
 export class Patient {
@@ -16,11 +24,18 @@ export class Patient {
   @Column({ name: 'last_name', length: 256 })
   lastName: string;
 
-  @Column({ name: 'search_last_name', length: 256 })
-  searchLastName: string;
+  @Column({ name: 'search_name', length: 256 })
+  searchName: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  updateSearchName() {
+    const searchName = `${this.firstName}${this.lastName}`;
+    this.searchName = sanitize(searchName);
+  }
 
   @Column({ name: 'birth_date', type: 'timestamp' })
-  birth_date: Date;
+  birthDate: Date;
 
   @Column({ length: 256 })
   phone: string;
@@ -45,4 +60,6 @@ export class Patient {
     const baseSlug = slugify(this.lastName, { lower: true });
     this.slug = `${baseSlug}-${nanoid(4)}`;
   }
+
+  //addresses?: Address[];
 }
