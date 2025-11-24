@@ -50,6 +50,7 @@ CREATE TABLE patients (
 -- ============================================
 CREATE TABLE addresses (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  label VARCHAR(256) NOT NULL,
   entity_type VARCHAR(128) REFERENCES enum_types(code),
   entity_id UUID NOT NULL,
   type_code VARCHAR(128) REFERENCES enum_types(code),

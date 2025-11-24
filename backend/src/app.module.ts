@@ -5,6 +5,7 @@ import { UsersModule } from './modules/users/users.module';
 import { EnumTypesModule } from './modules/enum-types/enum-types.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PatientsModule } from './modules/patients/patients.module';
+import { AddressesModule } from './modules/addresses/addresses.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PatientsModule } from './modules/patients/patients.module';
     EnumTypesModule,
     AuthModule,
     PatientsModule,
+    AddressesModule,
   ],
 })
 export class AppModule {}

@@ -1,4 +1,5 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import { AddressResponseDto } from '../../addresses/dto/address-response.dto';
 
 export class PatientResponseDto {
   @Expose()
@@ -30,4 +31,8 @@ export class PatientResponseDto {
 
   @Expose()
   updatedAt: Date;
+
+  @Expose()
+  @Type(() => AddressResponseDto)
+  addresses: AddressResponseDto[];
 }

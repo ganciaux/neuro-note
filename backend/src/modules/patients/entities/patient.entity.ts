@@ -9,6 +9,7 @@ import {
   BeforeInsert,
   BeforeUpdate,
 } from 'typeorm';
+import { Address } from '../../addresses/entities/address.entity';
 
 @Entity('patients')
 export class Patient {
@@ -61,5 +62,5 @@ export class Patient {
     this.slug = `${baseSlug}-${nanoid(4)}`;
   }
 
-  //addresses?: Address[];
+  addresses: Address[];
 }

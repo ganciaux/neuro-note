@@ -1,13 +1,5 @@
-import {
-  IsString,
-  MinLength,
-  MaxLength,
-  IsDate,
-  IsEmail,
-  IsOptional,
-  IsPhoneNumber,
-} from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { IsString, MinLength, MaxLength, IsDate, IsEmail } from 'class-validator';
+import { Type } from 'class-transformer';
 import { Trim } from '../../../common/helpers/trim.helper';
 import { IsEnumType } from '../../../common/validators/is-enum-type.validator';
 
