@@ -15,6 +15,13 @@ INSERT INTO enum_types(type, code, short_code, label) VALUES
 ('address_country', 'address_country_fr', 'fr', 'France'),
 ('address_country', 'address_country_be', 'be', 'Belgique');
 
+-- ============================================
+-- ENTITY MAPPING
+-- ============================================
+INSERT INTO entity_mapping(code, table_name) VALUES
+('address_entity_patient', 'patients'),
+('address_entity_user', 'users');
+
 -- ===============================
 -- USERS
 -- ===============================

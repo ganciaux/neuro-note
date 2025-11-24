@@ -13,6 +13,16 @@ CREATE TABLE enum_types (
 );
 
 -- ============================================
+-- ENTITY MAPPING
+-- ============================================
+CREATE TABLE entity_mapping (
+  code VARCHAR(128) NOT NULL,
+  table_name VARCHAR(128) NOT NULL,
+  id_column VARCHAR(128),
+  UNIQUE (code, table_name)
+);
+
+-- ============================================
 -- USERS
 -- ============================================
 CREATE TABLE users (
