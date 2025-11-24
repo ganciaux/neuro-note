@@ -10,6 +10,22 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
 
   constructor(protected readonly repository: Repository<Entity>) {}
 
+  protected async beforeCreate(_dto: CreateDto): Promise<void> {
+    return Promise.resolve();
+  }
+
+  protected async afterCreate(_entity: Entity): Promise<void> {
+    return Promise.resolve();
+  }
+
+  protected async beforeUpdate(_entity: Entity, _dto: UpdateDto): Promise<void> {
+    return Promise.resolve();
+  }
+
+  protected async afterUpdate(_entity: Entity): Promise<void> {
+    return Promise.resolve();
+  }
+
   protected async beforeDelete(_entity: Entity): Promise<void> {
     return Promise.resolve();
   }
@@ -46,27 +62,33 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
   }
 
   @CatchTypeOrmError()
-  async create(data: CreateDto): Promise<ResponseDto> {
-    const entity = this.repository.create(data as unknown as DeepPartial<Entity>);
+  async create(dto: CreateDto): Promise<ResponseDto> {
+    await this.beforeCreate(dto);
+    const entity = this.repository.create(dto as unknown as DeepPartial<Entity>);
     const saved = await this.repository.save(entity);
+    await this.afterCreate(saved);
     return toDto(this.responseDtoClass, saved);
   }
 
   @CatchTypeOrmError()
-  async update(id: string | number, data: UpdateDto): Promise<ResponseDto> {
+  async update(id: string | number, dto: UpdateDto): Promise<ResponseDto> {
     const where = { [this.idKey]: id } as FindOptionsWhere<Entity>;
 
-    const existing = await this.repository.findOne({ where });
-    if (!existing) throw new NotFoundException(`${this.entityLabel} #${id} not found`);
+    const entity = await this.repository.findOne({ where });
+    if (!entity) throw new NotFoundException(`${this.entityLabel} #${id} not found`);
 
-    Object.assign(existing, data);
-    const saved = await this.repository.save(existing);
+    await this.beforeUpdate(entity, dto);
+
+    Object.assign(entity, dto);
+    const saved = await this.repository.save(entity);
+
+    await this.afterUpdate(saved);
 
     return toDto(this.responseDtoClass, saved);
   }
 
   @CatchTypeOrmError()
-  async remove(id: string | number): Promise<void> {
+  async delete(id: string | number): Promise<void> {
     const where = { [this.idKey]: id } as FindOptionsWhere<Entity>;
     const existing = await this.repository.findOne({ where });
 
