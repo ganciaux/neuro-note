@@ -17,7 +17,7 @@ export class BaseController<Entity extends ObjectLiteral, ResponseDto, CreateDto
   @Post()
   async create(@Body() dto: CreateDto): Promise<ResponseDto> {
     if (this.beforeCreate) await this.beforeCreate(dto);
-    const result = this.service.create(dto);
+    const result = await this.service.create(dto);
     if (this.afterCreate) await this.afterCreate(result as unknown as Entity);
     return result;
   }
@@ -35,7 +35,7 @@ export class BaseController<Entity extends ObjectLiteral, ResponseDto, CreateDto
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto): Promise<ResponseDto> {
     if (this.beforeUpdate) await this.beforeUpdate(dto);
-    const result=this.service.update(id, dto);
+    const result = this.service.update(id, dto);
     if (this.afterUpdate) await this.afterUpdate(result as unknown as Entity);
     return result;
   }
