@@ -8,6 +8,12 @@ export class AddressResponseDto {
   label: string;
 
   @Expose()
+  entityId: string;
+
+  @Expose()
+  entityType: string;
+
+  @Expose()
   typeCode: string;
 
   @Expose()

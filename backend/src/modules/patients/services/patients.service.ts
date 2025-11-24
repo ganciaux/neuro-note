@@ -1,55 +1,38 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Patient } from '../entities/patient.entity';
 import { CreatePatientDto } from '../dto/create-patient.dto';
 import { UpdatePatientDto } from '../dto/update-patient.dto';
 import { PatientResponseDto } from '../dto/patient-response.dto';
 import { PatientsRepository } from '../repositories/patients.repository';
-import { toDto, toDtoArray } from '../../../common/utils/transform-to-dto';
-import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
-import { attachRelation } from '../../../common/utils/attach-relation.utils';
 import { AddressesRepository } from '../../addresses/repositories/addresses.repository';
+import { AddressesService } from '../../addresses/services/addresses.service';
+import { attachRelation } from '../../../common/utils/attach-relation.utils';
+import { BaseService } from '../../../common/base/base.service';
 
 @Injectable()
-export class PatientsService {
+export class PatientsService extends BaseService<
+  Patient,
+  PatientResponseDto,
+  CreatePatientDto,
+  UpdatePatientDto
+> {
+  protected readonly responseDtoClass = PatientResponseDto;
+  protected readonly idKey: keyof Patient = 'id';
+  protected readonly entityLabel = 'Patient';
+
   constructor(
     private readonly patientRepo: PatientsRepository,
     private readonly addressRepo: AddressesRepository,
-  ) {}
-
-  @CatchTypeOrmError()
-  async create(createPatientDto: CreatePatientDto): Promise<PatientResponseDto> {
-    const patient = this.patientRepo.create(createPatientDto);
-    const savedPatient = await this.patientRepo.save(patient);
-    return toDto(PatientResponseDto, savedPatient);
+    private readonly addressService: AddressesService,
+  ) {
+    super(patientRepo);
   }
 
-  async findAll(): Promise<PatientResponseDto[]> {
-    const patients = await this.patientRepo.find();
-    return toDtoArray(PatientResponseDto, patients);
+  protected async extendEntity(patient: Patient): Promise<Patient> {
+    return attachRelation(this.addressRepo, patient, 'addresses', 'address_entity_patient');
   }
 
-  async findOne(id: string): Promise<PatientResponseDto> {
-    const patient = await this.patientRepo.findOneBy({ id });
-    if (!patient) {
-      throw new NotFoundException(`Patient #${id} not found`);
-    }
-    await attachRelation(this.addressRepo, patient, 'addresses', 'address_entity_patient');
-    return toDto(PatientResponseDto, patient);
-  }
-
-  @CatchTypeOrmError()
-  async update(id: string, updatePatientDto: UpdatePatientDto): Promise<PatientResponseDto> {
-    const patient = await this.patientRepo.findOneBy({ id });
-    if (!patient) throw new NotFoundException(`patient #${id} not found`);
-    Object.assign(patient, updatePatientDto);
-    const updatedPatient = await this.patientRepo.save(patient);
-    await attachRelation(this.addressRepo, updatedPatient, 'addresses', 'address_entity_patient');
-    return toDto(PatientResponseDto, updatedPatient);
-  }
-
-  @CatchTypeOrmError()
-  async remove(id: string): Promise<void> {
-    const patient = await this.patientRepo.findOneBy({ id });
-    if (!patient) throw new NotFoundException(`patient #${id} not found`);
-    await this.patientRepo.delete(id);
+  protected async beforeDelete(patient: Patient): Promise<void> {
+    await this.addressService.deleteByEntity('address_entity_patient', patient.id);
   }
 }

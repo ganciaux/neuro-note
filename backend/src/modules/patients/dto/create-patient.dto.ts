@@ -4,7 +4,7 @@ import { Trim } from '../../../common/helpers/trim.helper';
 import { IsEnumType } from '../../../common/validators/is-enum-type.validator';
 
 export class CreatePatientDto {
-  @IsEnumType('patient_title', { message: 'titleCode invalide' })
+  @IsEnumType('patient_title')
   @IsString()
   @Trim()
   titleCode: string;

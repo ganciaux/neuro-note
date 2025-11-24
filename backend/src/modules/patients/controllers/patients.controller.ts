@@ -34,6 +34,11 @@ export class PatientsController {
     return this.patientsService.findOne(id);
   }
 
+  @Get(':id/details')
+  async findOneExtended(@Param('id', new ParseUUIDPipe()) id: string): Promise<PatientResponseDto> {
+    return this.patientsService.findOneExtended(id);
+  }
+
   @Patch(':id')
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,

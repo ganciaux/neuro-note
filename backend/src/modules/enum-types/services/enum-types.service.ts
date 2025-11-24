@@ -1,23 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { EnumTypesRepository } from '../repositories/enum-types.repository';
-import { toDto, toDtoArray } from '../../../common/utils/transform-to-dto';
+import { EnumType } from '../entities/enum-type.entity';
 import { EnumTypeResponseDto } from '../dto/enum-types-response.dto';
+import { CreateEnumTypeDto } from '../dto/create-enum-type.dto';
+import { UpdateEnumTypeDto } from '../dto/update-enum-type.dto';
+import { EnumTypesRepository } from '../repositories/enum-types.repository';
+import { toDtoArray } from '../../../common/utils/transform-to-dto';
+import { BaseService } from '../../../common/base/base.service';
 
 @Injectable()
-export class EnumTypesService {
-  constructor(private readonly enumRepo: EnumTypesRepository) {}
+export class EnumTypesService extends BaseService<
+  EnumType,
+  EnumTypeResponseDto,
+  CreateEnumTypeDto,
+  UpdateEnumTypeDto
+> {
+  protected readonly responseDtoClass = EnumTypeResponseDto;
+  protected readonly idKey: keyof EnumType = 'id';
+  protected readonly entityLabel = 'EnumType';
 
-  async findOne(id: string): Promise<EnumTypeResponseDto> {
-    const enumType = await this.enumRepo.findOneBy({ id });
-    if (!enumType) {
-      throw new NotFoundException(`enumType #${id} not found`);
-    }
-    return toDto(EnumTypeResponseDto, enumType);
-  }
-
-  async findAll(): Promise<EnumTypeResponseDto[]> {
-    const enumTypes = await this.enumRepo.find();
-    return toDtoArray(EnumTypeResponseDto, enumTypes);
+  constructor(private readonly enumRepo: EnumTypesRepository) {
+    super(enumRepo);
   }
 
   async findByType(type: string): Promise<EnumTypeResponseDto[]> {

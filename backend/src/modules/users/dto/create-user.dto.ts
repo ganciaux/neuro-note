@@ -16,7 +16,7 @@ export class CreateUserDto {
 
   @IsString()
   @Trim()
-  @IsEnumType('user_role', { message: 'roleCode invalide' })
+  @IsEnumType('user_role')
   @MaxLength(128)
   roleCode: string;
 

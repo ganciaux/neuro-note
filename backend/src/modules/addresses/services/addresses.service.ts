@@ -1,52 +1,35 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Address } from '../entities/address.entity';
 import { CreateAddressDto } from '../dto/create-address.dto';
 import { UpdateAddressDto } from '../dto/update-address.dto';
-import { AddressesRepository } from '../repositories/addresses.repository';
-import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
 import { AddressResponseDto } from '../dto/address-response.dto';
-import { toDto, toDtoArray } from '../../../common/utils/transform-to-dto';
+import { AddressesRepository } from '../repositories/addresses.repository';
+import { BaseService } from '../../../common/base/base.service';
 
 @Injectable()
-export class AddressesService {
-  constructor(private readonly addressRepo: AddressesRepository) {}
+export class AddressesService extends BaseService<
+  Address,
+  AddressResponseDto,
+  CreateAddressDto,
+  UpdateAddressDto
+> {
+  protected readonly responseDtoClass = AddressResponseDto;
+  protected readonly idKey: keyof Address = 'id';
+  protected readonly entityLabel = 'Address';
 
-  @CatchTypeOrmError()
-  async create(createAddressDto: CreateAddressDto): Promise<AddressResponseDto> {
-    console.log(createAddressDto);
-    const address = await this.addressRepo.save(createAddressDto);
-    console.log(address);
-    return toDto(AddressResponseDto, address);
+  constructor(private readonly addressRepo: AddressesRepository) {
+    super(addressRepo);
   }
 
-  async findAll(): Promise<AddressResponseDto[]> {
-    const addresses = await this.addressRepo.find();
-    console.log(addresses);
-    return toDtoArray(AddressResponseDto, addresses);
-  }
-
-  async findOne(id: string): Promise<AddressResponseDto> {
-    const address = await this.addressRepo.findOneBy({ id });
-    if (!address) {
-      throw new NotFoundException(`Address #${id} not found`);
-    }
-
-    return toDto(AddressResponseDto, address);
-  }
-
-  @CatchTypeOrmError()
-  async update(id: string, updateAddressDto: UpdateAddressDto): Promise<AddressResponseDto> {
-    const address = await this.addressRepo.findOneBy({ id });
-    if (!address) throw new NotFoundException(`address #${id} not found`);
-    Object.assign(address, updateAddressDto);
-    const updatedAddress = await this.addressRepo.save(address);
-
-    return toDto(AddressResponseDto, updatedAddress);
-  }
-
-  @CatchTypeOrmError()
-  async remove(id: string): Promise<void> {
-    const address = await this.addressRepo.findOneBy({ id });
-    if (!address) throw new NotFoundException(`address #${id} not found`);
-    await this.addressRepo.delete(id);
+  async deleteByEntity(entityType: string, entityId: string): Promise<void> {
+    /*
+    const now = new Date();
+    await this.addressRepo.update(
+        { entity_type: entityType, entity_id: entityId },
+        { deleted_at: now }
+    );
+    */
+    console.log(`Deleting addresses for entityType: ${entityType}, entityId: ${entityId}`);
+    await this.addressRepo.delete({ entityType: entityType, entityId: entityId });
   }
 }

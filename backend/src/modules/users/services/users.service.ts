@@ -1,16 +1,23 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UsersRepository } from '../repositories/users.repository';
+import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { User } from '../entities/user.entity';
-import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
 import { UserResponseDto } from '../dto/user-response.dto';
+import { UsersRepository } from '../repositories/users.repository';
+import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
 import { toDto, toDtoArray } from '../../../common/utils/transform-to-dto';
+import { BaseService } from '../../../common/base/base.service';
 
 @Injectable()
-export class UsersService {
-  constructor(private readonly userRepo: UsersRepository) {}
+export class UsersService extends BaseService<User, UserResponseDto, CreateUserDto, UpdateUserDto> {
+  protected readonly responseDtoClass = UserResponseDto;
+  protected readonly idKey: keyof User = 'id';
+  protected readonly entityLabel = 'User';
+
+  constructor(private readonly userRepo: UsersRepository) {
+    super(userRepo);
+  }
 
   @CatchTypeOrmError()
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
@@ -29,36 +36,6 @@ export class UsersService {
     const savedUser = await this.userRepo.save(user);
 
     return toDto(UserResponseDto, savedUser);
-  }
-
-  @CatchTypeOrmError()
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
-    const user = await this.userRepo.findOneBy({ id });
-    if (!user) throw new NotFoundException(`User #${id} not found`);
-    Object.assign(user, updateUserDto);
-    const updatedUser = await this.userRepo.save(user);
-
-    return toDto(UserResponseDto, updatedUser);
-  }
-
-  @CatchTypeOrmError()
-  async remove(id: string): Promise<void> {
-    const user = await this.userRepo.findOneBy({ id });
-    if (!user) throw new NotFoundException(`User #${id} not found`);
-    await this.userRepo.delete(id);
-  }
-
-  async findOne(id: string): Promise<UserResponseDto> {
-    const user = await this.userRepo.findOneBy({ id });
-    if (!user) {
-      throw new NotFoundException(`User #${id} not found`);
-    }
-    return toDto(UserResponseDto, user);
-  }
-
-  async findAll(): Promise<UserResponseDto[]> {
-    const users = await this.userRepo.find();
-    return toDtoArray(UserResponseDto, users);
   }
 
   async findBySlug(slug: string): Promise<UserResponseDto> {
