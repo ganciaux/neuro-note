@@ -8,8 +8,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EnumType } from '../../modules/enum-types/entities/enum-type.entity';
+import { Injectable } from '@nestjs/common';
 
 @ValidatorConstraint({ async: true })
+@Injectable()
 export class IsEnumTypeConstraint implements ValidatorConstraintInterface {
   constructor(
     @InjectRepository(EnumType)
@@ -30,7 +32,7 @@ export class IsEnumTypeConstraint implements ValidatorConstraintInterface {
 
   defaultMessage(args: ValidationArguments) {
     const [expectedType] = args.constraints as [string];
-    return `${args.property} must be a valid code of type '${expectedType}'`;
+    return `'${args.value}' is not a valid code of type '${expectedType}'`;
   }
 }
 
