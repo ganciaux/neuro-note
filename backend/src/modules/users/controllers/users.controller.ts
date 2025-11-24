@@ -1,55 +1,24 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpCode,
-  HttpStatus,
-  ParseUUIDPipe,
-} from '@nestjs/common';
-import { UsersService } from '../services/users.service';
+import { Controller, Get, Param } from '@nestjs/common';
+import { BaseController } from '../../../common/base/base.controller';
+import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
+import { UsersService } from '../services/users.service';
 
 @Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Get()
-  findAll(): Promise<UserResponseDto[]> {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<UserResponseDto> {
-    return this.usersService.findOne(id);
+export class UsersController extends BaseController<
+  User,
+  UserResponseDto,
+  CreateUserDto,
+  UpdateUserDto
+> {
+  constructor(private readonly usersService: UsersService) {
+    super(usersService);
   }
 
   @Get('u/:slug')
-  async findBySlug(@Param('slug') slug: string): Promise<UserResponseDto> {
+  findBySlug(@Param('slug') slug: string): Promise<UserResponseDto> {
     return this.usersService.findBySlug(slug);
-  }
-
-  @Patch(':id')
-  async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserResponseDto> {
-    return this.usersService.update(id, updateUserDto);
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.usersService.delete(id);
   }
 }

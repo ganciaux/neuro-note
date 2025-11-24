@@ -1,4 +1,4 @@
-import { Repository, ObjectLiteral, FindOptionsWhere, DeepPartial } from 'typeorm';
+import { Repository, ObjectLiteral, FindOptionsWhere, DeepPartial, Not, IsNull } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { toDto, toDtoArray } from '../utils/transform-to-dto';
 import { CatchTypeOrmError } from '../decorators/catch-typeorm-error.decorator';
@@ -49,8 +49,8 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
   }
 
   async findOneExtended(id: string | number): Promise<ResponseDto> {
-    const entity = await this.findRaw(id);
-    const extended = await this.extendEntity(entity);
+    const entity: Entity = await this.findRaw(id);
+    const extended: Entity = await this.extendEntity(entity);
     return toDto(this.responseDtoClass, extended);
   }
 
@@ -99,5 +99,33 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
     await this.repository.delete(where);
 
     await this.afterDelete(existing);
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.repository.softDelete(id);
+  }
+
+  async restore(id: string): Promise<ResponseDto> {
+    await this.repository.restore(id);
+    const where = { [this.idKey]: id } as FindOptionsWhere<Entity>;
+    const restoredEntity = this.repository.findOneOrFail({ where });
+    return toDto(this.responseDtoClass, restoredEntity);
+  }
+
+  count(): Promise<number> {
+    return this.repository.count();
+  }
+
+  async findDeleted(): Promise<ResponseDto[]> {
+    const whereClause = {
+      deletedAt: Not(IsNull()) as unknown as Entity[Extract<keyof Entity, 'deletedAt'>],
+    } satisfies FindOptionsWhere<Entity>;
+
+    const entities = await this.repository.find({
+      withDeleted: true,
+      where: whereClause,
+    });
+
+    return toDtoArray(this.responseDtoClass, entities);
   }
 }

@@ -1,34 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AddressesService } from '../services/addresses.service';
+import { Controller } from '@nestjs/common';
+import { BaseController } from '../../../common/base/base.controller';
+import { Address } from '../entities/address.entity';
+import { AddressResponseDto } from '../dto/address-response.dto';
 import { CreateAddressDto } from '../dto/create-address.dto';
 import { UpdateAddressDto } from '../dto/update-address.dto';
+import { AddressesService } from '../services/addresses.service';
 
 @Controller('addresses')
-export class AddressesController {
-  constructor(private readonly addressesService: AddressesService) {}
-
-  @Post()
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressesService.create(createAddressDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.addressesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.addressesService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
-    return this.addressesService.update(id, updateAddressDto);
-  }
-
-  @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.addressesService.delete(id);
+export class AddressesController extends BaseController<
+  Address,
+  AddressResponseDto,
+  CreateAddressDto,
+  UpdateAddressDto
+> {
+  constructor(private readonly addressesService: AddressesService) {
+    super(addressesService);
   }
 }

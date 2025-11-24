@@ -1,23 +1,24 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
-import { EnumTypesService } from '../services/enum-types.service';
+import { Controller, Get, Param } from '@nestjs/common';
+import { BaseController } from '../../../common/base/base.controller';
+import { EnumType } from '../entities/enum-type.entity';
 import { EnumTypeResponseDto } from '../dto/enum-types-response.dto';
+import { CreateEnumTypeDto } from '../dto/create-enum-type.dto';
+import { UpdateEnumTypeDto } from '../dto/update-enum-type.dto';
+import { EnumTypesService } from '../services/enum-types.service';
 
 @Controller('enums')
-export class EnumTypesController {
-  constructor(private readonly enumService: EnumTypesService) {}
+export class EnumTypesController extends BaseController<
+  EnumType,
+  EnumTypeResponseDto,
+  CreateEnumTypeDto,
+  UpdateEnumTypeDto
+> {
+  constructor(private readonly enumService: EnumTypesService) {
+    super(enumService);
+  }
 
   @Get('type/:type')
   findByType(@Param('type') type: string): Promise<EnumTypeResponseDto[]> {
     return this.enumService.findByType(type);
-  }
-
-  @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<EnumTypeResponseDto> {
-    return this.enumService.findOne(id);
-  }
-
-  @Get()
-  findAll(): Promise<EnumTypeResponseDto[]> {
-    return this.enumService.findAll();
   }
 }
