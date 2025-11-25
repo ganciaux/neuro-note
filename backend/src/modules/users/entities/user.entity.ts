@@ -29,8 +29,14 @@ export class User {
   @Column({ name: 'role_code', length: 128 })
   roleCode: string;
 
-  @Column({ name: 'full_name', length: 256 })
-  fullName: string;
+  @Column({ name: 'user_name', length: 256 })
+  userName: string;
+
+  @Column({ name: 'first_name', length: 256 })
+  firstName: string;
+
+  @Column({ name: 'last_name', length: 256 })
+  lastName: string;
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'now()' })
   createdAt: Date;
@@ -46,7 +52,7 @@ export class User {
 
   @BeforeInsert()
   generateSlug() {
-    const baseSlug = slugify(this.fullName, { lower: true });
+    const baseSlug = slugify(this.userName, { lower: true });
     this.slug = `${baseSlug}-${nanoid(4)}`;
   }
 }

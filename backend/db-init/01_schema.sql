@@ -31,7 +31,9 @@ CREATE TABLE users (
   email VARCHAR(256) UNIQUE NOT NULL,
   password_hash VARCHAR(256) NOT NULL,
   role_code VARCHAR(128) REFERENCES enum_types(code),
-  full_name VARCHAR(256) NOT NULL,
+  user_name VARCHAR(256) NOT NULL,
+  first_name VARCHAR(256) NOT NULL,
+  last_name VARCHAR(256) NOT NULL,
   created_at TIMESTAMP DEFAULT now(),
   updated_at TIMESTAMP DEFAULT now(),
   deleted_at TIMESTAMP

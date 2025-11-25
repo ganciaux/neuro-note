@@ -6,41 +6,55 @@ import { Filterable } from '../../../common/query-filters/filter.decorators';
 import { FilterOperator } from '../../../common/query-filters/filter-operators.enum';
 import { IsEnumType } from '../../../common/validators/is-enum-type.validator';
 
-export class FilterPatientDto extends FilterOptionsDto {
+export class FilterAddressDto extends FilterOptionsDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.LIKE, FilterOperator.IN])
-  @IsEnumType('patient_title', { each: true })
-  titleCode: string;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.LIKE])
-  lastName?: FilterFieldDto;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
-  firstName?: FilterFieldDto;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.EQ, FilterOperator.GT, FilterOperator.LT, FilterOperator.BETWEEN])
-  birthDate?: FilterFieldDto;
+  @Filterable([FilterOperator.EQ, FilterOperator.IN])
+  @IsEnumType('address_entity', { each: true })
+  entityType?: FilterFieldDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
   @Filterable([FilterOperator.EQ])
-  phone?: FilterFieldDto;
+  entityId?: FilterFieldDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
   @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
-  email?: FilterFieldDto;
+  label?: FilterFieldDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FilterFieldDto)
+  @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
+  street?: FilterFieldDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FilterFieldDto)
+  @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
+  postalCode?: FilterFieldDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FilterFieldDto)
+  @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
+  city?: FilterFieldDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FilterFieldDto)
+  @Filterable([FilterOperator.EQ, FilterOperator.IN])
+  @IsEnumType('address_type', { each: true })
+  typeCode?: FilterFieldDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FilterFieldDto)
+  @Filterable([FilterOperator.EQ, FilterOperator.IN])
+  @IsEnumType('address_country', { each: true })
+  countryCode?: FilterFieldDto;
 }

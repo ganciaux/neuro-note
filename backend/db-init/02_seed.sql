@@ -21,15 +21,3 @@ INSERT INTO enum_types(type, code, short_code, label) VALUES
 INSERT INTO entity_mapping(code, table_name) VALUES
 ('address_entity_patient', 'patients'),
 ('address_entity_user', 'users');
-
--- ===============================
--- USERS
--- ===============================
-INSERT INTO users(email, slug, password_hash, role_code, full_name) VALUES
-('admin@example.com', 'admin-0000', 'hash1', 'user_role_admin', 'Admin User');
-
--- ===============================
--- PATIENTS
--- ===============================
-INSERT INTO patients(title_code, first_name, last_name, search_name, slug, birth_date, phone, email) VALUES
-('patient_title_mr', 'John', 'Doe', 'johndoe', 'john-doe', '1985-04-12', '+352123456', 'john@example.com');

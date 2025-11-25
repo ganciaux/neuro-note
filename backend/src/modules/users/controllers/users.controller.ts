@@ -1,9 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { BaseController } from '../../../common/base/base.controller';
+import { toDto } from '../../../common/utils/transform-to-dto';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
+import { FilterUserDto } from '../dto/filter-user.dto';
 import { UsersService } from '../services/users.service';
 
 @Controller('users')
@@ -22,5 +24,18 @@ export class UsersController extends BaseController<
   @Get('u/:slug')
   findBySlug(@Param('slug') slug: string): Promise<UserResponseDto> {
     return this.usersService.findBySlug(slug);
+  }
+
+  @Get('search')
+  async searchUsers(@Query() query: FilterUserDto) {
+    const [entities, total] = await this.usersService.search(query);
+    return {
+      data: entities.map((e) => toDto(UserResponseDto, e)),
+      meta: {
+        page: query.page,
+        limit: query.limit,
+        total,
+      },
+    };
   }
 }

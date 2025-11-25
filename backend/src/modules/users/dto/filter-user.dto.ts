@@ -6,14 +6,7 @@ import { Filterable } from '../../../common/query-filters/filter.decorators';
 import { FilterOperator } from '../../../common/query-filters/filter-operators.enum';
 import { IsEnumType } from '../../../common/validators/is-enum-type.validator';
 
-export class FilterPatientDto extends FilterOptionsDto {
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.LIKE, FilterOperator.IN])
-  @IsEnumType('patient_title', { each: true })
-  titleCode: string;
-
+export class FilterUserDto extends FilterOptionsDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
@@ -29,18 +22,19 @@ export class FilterPatientDto extends FilterOptionsDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.EQ, FilterOperator.GT, FilterOperator.LT, FilterOperator.BETWEEN])
-  birthDate?: FilterFieldDto;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.EQ])
-  phone?: FilterFieldDto;
+  @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
+  userName?: FilterFieldDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
   @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
   email?: FilterFieldDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FilterFieldDto)
+  @Filterable([FilterOperator.EQ, FilterOperator.IN])
+  @IsEnumType('user_role')
+  roleCode?: FilterFieldDto;
 }
