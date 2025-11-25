@@ -86,7 +86,9 @@ async function seedFakeData() {
     const user = userRepo.create({
       email,
       passwordHash: hashedPassword,
-      fullName: `${firstName} ${lastName}`,
+      firstName: `${firstName}`,
+      lastName: `${lastName}`,
+      userName: faker.internet.username(),
       roleCode: faker.helpers.arrayElement(roles),
     });
     users.push(user);
