@@ -60,7 +60,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } else {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       title = 'Internal server error';
-      detail = this.isDebug ? { exception } : undefined;
+      if (this.isDebug) {
+        detail = {
+          exception: {
+            name: exception?.name,
+            message: exception?.message,
+            stack: exception?.stack,
+          },
+        };
+      }
     }
 
     const payload: ApiErrorResponse = {

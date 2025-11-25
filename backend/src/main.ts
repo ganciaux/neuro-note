@@ -4,6 +4,7 @@ import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception/global-exception.filter';
 import { appConfig } from './config';
+import { QueryParsePipe } from './common/pipe/query-parse.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter(appConfig.isDebug));
 
   app.useGlobalPipes(
+    new QueryParsePipe(),
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
