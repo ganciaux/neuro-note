@@ -13,6 +13,8 @@ export class UsersController extends BaseController<
   CreateUserDto,
   UpdateUserDto
 > {
+  protected readonly responseDtoClass = UserResponseDto;
+
   constructor(private readonly usersService: UsersService) {
     super(usersService);
   }

@@ -13,6 +13,8 @@ export class AddressesController extends BaseController<
   CreateAddressDto,
   UpdateAddressDto
 > {
+  protected readonly responseDtoClass = AddressResponseDto;
+
   constructor(private readonly addressesService: AddressesService) {
     super(addressesService);
   }

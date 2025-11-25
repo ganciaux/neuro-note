@@ -8,11 +8,20 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { BaseService } from './base.service';
 import { ObjectLiteral } from 'typeorm';
+import { FilterOptionsDto } from '../query-filters/filter-options.dto';
+import { toDto } from '../utils/transform-to-dto';
 
-export class BaseController<Entity extends ObjectLiteral, ResponseDto, CreateDto, UpdateDto> {
+export abstract class BaseController<
+  Entity extends ObjectLiteral,
+  ResponseDto,
+  CreateDto,
+  UpdateDto,
+> {
+  protected abstract readonly responseDtoClass: new () => ResponseDto;
   constructor(protected readonly service: BaseService<Entity, ResponseDto, CreateDto, UpdateDto>) {}
 
   protected beforeCreate?(dto: CreateDto): Promise<void> | void {}
@@ -35,6 +44,41 @@ export class BaseController<Entity extends ObjectLiteral, ResponseDto, CreateDto
   @Get()
   findAll(): Promise<ResponseDto[]> {
     return this.service.findAll();
+  }
+
+  @Get('count')
+  count(): Promise<number> {
+    return this.service.count();
+  }
+
+  @Get('deleted')
+  findDeleted(): Promise<ResponseDto[]> {
+    return this.service.findDeleted();
+  }
+
+  @Get('search')
+  async search<FilterDto extends FilterOptionsDto>(@Query() query: FilterDto) {
+    const [entities, total] = await this.service.search(query);
+
+    return {
+      data: entities.map((e) => toDto(this.responseDtoClass, e)),
+      meta: {
+        page: query.page,
+        limit: query.limit,
+        total,
+      },
+    };
+  }
+
+  @Post('soft-delete/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async softDelete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
+    await this.service.softDelete(id);
+  }
+
+  @Post('restore/:id')
+  restore(@Param('id', new ParseUUIDPipe()) id: string): Promise<ResponseDto> {
+    return this.service.restore(id);
   }
 
   @Get(':id')
@@ -60,25 +104,5 @@ export class BaseController<Entity extends ObjectLiteral, ResponseDto, CreateDto
     const result = await this.service.delete(id);
     if (this.afterDelete) await this.afterDelete(id);
     return result;
-  }
-
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async softDelete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
-    await this.service.softDelete(id);
-  }
-
-  @Post(':id/restore')
-  restore(@Param('id', new ParseUUIDPipe()) id: string): Promise<ResponseDto> {
-    return this.service.restore(id);
-  }
-
-  @Get('count')
-  count(): Promise<number> {
-    return this.service.count();
-  }
-
-  @Get('deleted')
-  findDeleted(): Promise<ResponseDto[]> {
-    return this.service.findDeleted();
   }
 }

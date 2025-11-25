@@ -13,6 +13,8 @@ export class EnumTypesController extends BaseController<
   CreateEnumTypeDto,
   UpdateEnumTypeDto
 > {
+  protected readonly responseDtoClass = EnumTypeResponseDto;
+
   constructor(private readonly enumService: EnumTypesService) {
     super(enumService);
   }

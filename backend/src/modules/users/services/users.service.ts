@@ -14,6 +14,7 @@ export class UsersService extends BaseService<User, UserResponseDto, CreateUserD
   protected readonly responseDtoClass = UserResponseDto;
   protected readonly idKey: keyof User = 'id';
   protected readonly entityLabel = 'User';
+  protected alias = 'user';
 
   constructor(private readonly userRepo: UsersRepository) {
     super(userRepo);
@@ -49,16 +50,6 @@ export class UsersService extends BaseService<User, UserResponseDto, CreateUserD
   async findActiveAdmins(): Promise<UserResponseDto[]> {
     const admins = await this.userRepo.findActiveAdmins();
     return toDtoArray(UserResponseDto, admins);
-  }
-
-  async search(filters: { email?: string; name?: string }): Promise<UserResponseDto[]> {
-    const users = await this.userRepo.search(filters);
-    return toDtoArray(UserResponseDto, users);
-  }
-
-  async searchTerm(term: string): Promise<UserResponseDto[]> {
-    const users = await this.userRepo.searchTerm(term);
-    return toDtoArray(UserResponseDto, users);
   }
 
   async validatePassword(user: User, password: string): Promise<boolean> {

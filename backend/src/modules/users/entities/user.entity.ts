@@ -39,7 +39,7 @@ export class User {
   updatedAt: Date;
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 
   @Column({ unique: true })
   slug: string;

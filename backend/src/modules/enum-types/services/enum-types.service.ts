@@ -17,6 +17,7 @@ export class EnumTypesService extends BaseService<
   protected readonly responseDtoClass = EnumTypeResponseDto;
   protected readonly idKey: keyof EnumType = 'id';
   protected readonly entityLabel = 'EnumType';
+  protected alias = 'enum_type';
 
   constructor(private readonly enumRepo: EnumTypesRepository) {
     super(enumRepo);

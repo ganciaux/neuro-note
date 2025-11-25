@@ -19,6 +19,7 @@ export class PatientsService extends BaseService<
   protected readonly responseDtoClass = PatientResponseDto;
   protected readonly idKey: keyof Patient = 'id';
   protected readonly entityLabel = 'Patient';
+  protected alias = 'patient';
 
   constructor(
     private readonly patientRepo: PatientsRepository,

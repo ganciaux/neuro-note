@@ -2,11 +2,14 @@ import { Repository, ObjectLiteral, FindOptionsWhere, DeepPartial, Not, IsNull }
 import { NotFoundException } from '@nestjs/common';
 import { toDto, toDtoArray } from '../utils/transform-to-dto';
 import { CatchTypeOrmError } from '../decorators/catch-typeorm-error.decorator';
+import { FilterOptionsDto } from '../query-filters/filter-options.dto';
+import { applyQuery } from '../query-filters/filter-apply';
 
 export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, CreateDto, UpdateDto> {
   protected abstract readonly responseDtoClass: new () => ResponseDto;
   protected abstract readonly idKey: keyof Entity;
   protected abstract readonly entityLabel: string;
+  protected abstract alias: string;
 
   constructor(protected readonly repository: Repository<Entity>) {}
 
@@ -127,5 +130,13 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
     });
 
     return toDtoArray(this.responseDtoClass, entities);
+  }
+
+  async search<FilterDto extends FilterOptionsDto>(
+    options: FilterDto,
+  ): Promise<[Entity[], number]> {
+    const qb = this.repository.createQueryBuilder(this.alias);
+    applyQuery(qb, options, this.alias);
+    return qb.getManyAndCount();
   }
 }

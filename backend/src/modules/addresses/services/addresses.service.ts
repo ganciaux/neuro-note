@@ -16,6 +16,7 @@ export class AddressesService extends BaseService<
   protected readonly responseDtoClass = AddressResponseDto;
   protected readonly idKey: keyof Address = 'id';
   protected readonly entityLabel = 'Address';
+  protected alias = 'address';
 
   constructor(private readonly addressRepo: AddressesRepository) {
     super(addressRepo);
@@ -29,7 +30,6 @@ export class AddressesService extends BaseService<
         { deleted_at: now }
     );
     */
-    console.log(`Deleting addresses for entityType: ${entityType}, entityId: ${entityId}`);
     await this.addressRepo.delete({ entityType: entityType, entityId: entityId });
   }
 }
