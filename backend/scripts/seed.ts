@@ -4,7 +4,7 @@ import path from 'path';
 
 const fileName = process.argv[2];
 if (!fileName) {
-  console.error("❌ Usage: npx ts-node scripts/seed.ts <filename.sql>");
+  console.error('❌ Usage: npx ts-node scripts/seed.ts <filename.sql>');
   process.exit(1);
 }
 
