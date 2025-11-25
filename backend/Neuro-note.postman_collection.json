@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "f8587fc1-9a73-458d-bbe2-900bb4f0493f",
+		"_postman_id": "3aa029bd-0fe2-4874-a748-b5efce11a6eb",
 		"name": "Neuro-note",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "12964862"
+		"_exporter_id": "3232696",
+		"_collection_link": "https://winter-desert-906706.postman.co/workspace/6d7ec3d7-08cb-4b3b-869a-1fd7b33602d7/collection/3232696-3aa029bd-0fe2-4874-a748-b5efce11a6eb?action=share&source=collection_link&creator=3232696"
 	},
 	"item": [
 		{
@@ -15,6 +16,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -27,13 +38,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{url }}:{{ port}}/{{ api}}/auth/me",
+							"raw": "{{url}}:{{port}}/{{api}}/auth/me",
 							"host": [
-								"{{url }}"
+								"{{url}}"
 							],
-							"port": "{{ port}}",
+							"port": "{{port}}",
 							"path": [
-								"{{ api}}",
+								"{{api}}",
 								"auth",
 								"me"
 							]
@@ -53,7 +64,8 @@
 									"pm.environment.set(\"jwt\", res.accessToken);"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -62,7 +74,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ghislain@anciaux.fr\",\n    \"password\":\"12345678\"\n}",
+							"raw": "{\n    \"email\": \"ghislain5@anciaux.fr\",\n    \"password\":\"12345678\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -70,13 +82,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{url }}:{{ port}}/{{ api}}/auth/login",
+							"raw": "{{url}}:{{port}}/{{api}}/auth/login",
 							"host": [
-								"{{url }}"
+								"{{url}}"
 							],
-							"port": "{{ port}}",
+							"port": "{{port}}",
 							"path": [
-								"{{ api}}",
+								"{{api}}",
 								"auth",
 								"login"
 							]
@@ -96,7 +108,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"titleCode\": \"patient_title_mr\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"birthDate\": \"1985-04-12T00:00:00.000Z\",\n    \"email\": \"john@example.com\",\n    \"phone\":\"1234\"}",
+							"raw": "{\n    \"titleCode\": \"patient_title_mr\",\n    \"firstName\": \"John 2\",\n    \"lastName\": \"Doe\",\n    \"birthDate\": \"1985-04-12T00:00:00.000Z\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"1234\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -132,13 +144,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{url }}:{{ port}}/{{ api}}/patients/{{patient_uuid}}",
+							"raw": "{{url}}:{{port}}/{{api}}/patients/{{patient_uuid}}",
 							"host": [
-								"{{url }}"
+								"{{url}}"
 							],
-							"port": "{{ port}}",
+							"port": "{{port}}",
 							"path": [
-								"{{ api}}",
+								"{{api}}",
 								"patients",
 								"{{patient_uuid}}"
 							]
@@ -156,7 +168,8 @@
 									""
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -173,13 +186,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{url }}:{{ port}}/{{ api}}/patients/{{patient_uuid}}",
+							"raw": "{{url}}:{{port}}/{{api}}/patients/{{patient_uuid}}",
 							"host": [
-								"{{url }}"
+								"{{url}}"
 							],
-							"port": "{{ port}}",
+							"port": "{{port}}",
 							"path": [
-								"{{ api}}",
+								"{{api}}",
 								"patients",
 								"{{patient_uuid}}"
 							]
@@ -188,7 +201,98 @@
 					"response": []
 				},
 				{
-					"name": "get list",
+					"name": "get by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients/{{patient_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients",
+								"{{patient_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients/details/{{patient_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients",
+								"details",
+								"{{patient_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
 					"event": [
 						{
 							"listen": "test",
@@ -234,6 +338,36 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients/search?limit=5&page=2",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients",
+								"search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "page",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -247,7 +381,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ghislain2@anciaux.fr\",\n    \"password\":\"12345678\",\n    \"fullName\": \"Admin User\",\n    \"roleCode\": \"user_role_admin\"\n}",
+							"raw": "{\n    \"email\": \"ghislain5@anciaux.fr\",\n    \"password\":\"12345678\",\n    \"fullName\": \"Admin User\",\n    \"roleCode\": \"user_role_admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -275,7 +409,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ghislain1@anciaux.fr\",\n    \"password\":\"12345678\"\n}",
+							"raw": "{\n    \"email\": \"ghislain10@anciaux.fr\",\n    \"password\":\"12345678\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -339,21 +473,17 @@
 					"response": []
 				},
 				{
-					"name": "get list",
+					"name": "get by id",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"let res = pm.response.json();",
-									"",
-									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
-									"if (Array.isArray(res) && res.length > 0) {",
-									"    pm.environment.set(\"user_uuid\", res[0].id);",
-									"}"
+									""
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -373,9 +503,59 @@
 							}
 						},
 						"url": {
-							"raw": "{{url }}:{{port}}/{{api}}/users",
+							"raw": "{{url}}:{{port}}/{{api}}/users/{{user_uuid}}",
 							"host": [
-								"{{url }}"
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users",
+								"{{user_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();",
+									"",
+									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
+									"if (Array.isArray(res) && res.length > 0) {",
+									"    pm.environment.set(\"user_uuid\", res[0].id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users",
+							"host": [
+								"{{url}}"
 							],
 							"port": "{{port}}",
 							"path": [
@@ -389,10 +569,208 @@
 			]
 		},
 		{
+			"name": "Addresses",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\":\"my address 3\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street 2\",\n    \"postalCode\":\"542600\",\n    \"city\":\"city2\",\n    \"countryCode\":\"address_country_lu\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses/{{address_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses",
+								"{{address_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses/{{address_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses",
+								"{{address_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses/{{address_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses",
+								"{{address_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();",
+									"",
+									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
+									"if (Array.isArray(res) && res.length > 0) {",
+									"    pm.environment.set(\"address_uuid\", res[0].id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Enum",
 			"item": [
 				{
-					"name": "enum by type",
+					"name": "get by type",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -425,7 +803,7 @@
 					"response": []
 				},
 				{
-					"name": "enum by  id",
+					"name": "get by id",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -442,13 +820,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{url }}:{{ port}}/{{ api}}/enums/{{enum_types_uuid}}",
+							"raw": "{{url}}:{{port}}/{{api}}/enums/{{enum_types_uuid}}",
 							"host": [
-								"{{url }}"
+								"{{url}}"
 							],
-							"port": "{{ port}}",
+							"port": "{{port}}",
 							"path": [
-								"{{ api}}",
+								"{{api}}",
 								"enums",
 								"{{enum_types_uuid}}"
 							]
@@ -457,7 +835,7 @@
 					"response": []
 				},
 				{
-					"name": "enum all",
+					"name": "get all",
 					"event": [
 						{
 							"listen": "test",
