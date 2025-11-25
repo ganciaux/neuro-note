@@ -1,46 +1,72 @@
-import { IsOptional, ValidateNested } from 'class-validator';
-import { FilterOptionsDto } from '../../../common/query-filters/filter-options.dto';
+import {
+  IsDate,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
+import { FilterOptionsDto } from '../../../common/query-filters/filter-options.dto';
 import { FilterFieldDto } from '../../../common/query-filters/filter-field.dto';
-import { Filterable } from '../../../common/query-filters/filter.decorators';
 import { FilterOperator } from '../../../common/query-filters/filter-operators.enum';
-import { IsEnumType } from '../../../common/validators/is-enum-type.validator';
+import { FilterField } from '../../../common/decorators/filter-field.decorator';
+import { Trim } from '../../../common/helpers/trim.helper';
+import { FilterEnum } from '../../../common/decorators/filter-enum.decorator';
 
 export class FilterPatientDto extends FilterOptionsDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.LIKE, FilterOperator.IN])
-  @IsEnumType('patient_title', { each: true })
+  @FilterField({
+    operators: [FilterOperator.EQ, FilterOperator.LIKE],
+    rules: [IsString()],
+  })
+  @FilterEnum('patient_title')
   titleCode: string;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.LIKE])
+  @FilterField({
+    operators: [FilterOperator.EQ, FilterOperator.LIKE],
+    rules: [IsString(), Trim(), MinLength(1), MaxLength(256)],
+  })
   lastName?: FilterFieldDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
+  @FilterField({
+    operators: [FilterOperator.EQ],
+    rules: [IsString(), Trim(), MinLength(1), MaxLength(256)],
+  })
   firstName?: FilterFieldDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.EQ, FilterOperator.GT, FilterOperator.LT, FilterOperator.BETWEEN])
+  @FilterField({
+    operators: [FilterOperator.EQ, FilterOperator.GT, FilterOperator.LT, FilterOperator.BETWEEN],
+    rules: [IsDate()],
+  })
   birthDate?: FilterFieldDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.EQ])
+  @FilterField({
+    operators: [FilterOperator.EQ],
+    rules: [IsString(), Trim(), MinLength(1), MaxLength(256)],
+  })
   phone?: FilterFieldDto;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FilterFieldDto)
-  @Filterable([FilterOperator.EQ, FilterOperator.LIKE])
+  @FilterField({
+    operators: [FilterOperator.EQ],
+    rules: [Trim(), IsString()],
+  })
   email?: FilterFieldDto;
 }

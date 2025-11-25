@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsOptional, IsEnum, IsString } from 'class-validator';
 import { FilterOperator } from './filter-operators.enum';
 
-export class FilterFieldDto {
+export class FilterFieldDto<T = string> {
   @IsOptional()
   @IsEnum(FilterOperator)
   operator?: FilterOperator;
@@ -10,19 +10,19 @@ export class FilterFieldDto {
   //EQ, GT, GTE, LT, LTE, LIKE
   @IsOptional()
   @IsString()
-  value?: string;
+  value?: T;
 
   //IN
   @IsOptional()
-  @Type(() => String)
-  values?: string[];
+  @Type(() => T)
+  values?: T[];
 
   //BETWEEN
   @IsOptional()
   @IsString()
-  from?: string;
+  from?: T;
 
   @IsOptional()
   @IsString()
-  to?: string;
+  to?: T;
 }

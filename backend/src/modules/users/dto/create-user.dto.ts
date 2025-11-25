@@ -24,5 +24,17 @@ export class CreateUserDto {
   @Trim()
   @MinLength(1)
   @MaxLength(256)
-  fullName: string;
+  lastName: string;
+
+  @IsString()
+  @Trim()
+  @MinLength(1)
+  @MaxLength(256)
+  firstName: string;
+
+  @IsString()
+  @Trim()
+  @MinLength(1)
+  @MaxLength(256)
+  UserName: string;
 }

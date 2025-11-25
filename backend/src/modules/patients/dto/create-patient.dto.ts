@@ -25,7 +25,9 @@ export class CreatePatientDto {
   @IsDate()
   birthDate: Date;
 
+  @IsString()
   @Trim()
+  @MinLength(1)
   @MaxLength(256)
   phone?: string;
 

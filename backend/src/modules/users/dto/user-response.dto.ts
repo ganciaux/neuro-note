@@ -8,7 +8,13 @@ export class UserResponseDto {
   email: string;
 
   @Expose()
-  fullName: string;
+  firstName: string;
+
+  @Expose()
+  lastName: string;
+
+  @Expose()
+  userName: string;
 
   @Expose()
   roleCode: string;
