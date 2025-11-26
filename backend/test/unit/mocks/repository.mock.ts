@@ -11,6 +11,10 @@ export const createMockRepository = () => ({
   createQueryBuilder: jest.fn().mockReturnValue({
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    addSelect: jest.fn().mockReturnThis(),
     getManyAndCount: jest.fn(),
+    getMany: jest.fn(),
+    getOne: jest.fn(),
   }),
 });
