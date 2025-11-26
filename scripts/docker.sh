@@ -2,7 +2,7 @@
 
 # Usage:
 # ./docker.sh [env] [mode]
-# env: dev | prod (default: dev)
+# env: dev | prod | test (default: dev)
 # mode: up | logs | reset-build | stop (default: reset-build)
 
 ENV=${1:-dev}               # environment (default dev)
@@ -36,7 +36,7 @@ case "$MODE" in
     ;;
   *)
     echo "Unknown mode: $MODE"
-    echo "Usage: $0 [dev|prod] [up|logs|reset-build|stop]"
+    echo "Usage: $0 [dev|prod|test] [up|logs|reset-build|stop]"
     exit 1
     ;;
 esac

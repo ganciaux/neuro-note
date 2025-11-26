@@ -3,7 +3,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.dev   # on fera un Dockerfile dev séparé
+      dockerfile: Dockerfile.dev
     container_name: dev-neuro-note-backend
     command: npm run start:dev
     env_file: ./backend/.env_dev
@@ -11,7 +11,7 @@ services:
       - "3000:3000"
     volumes:
       - ./backend:/app
-      - /app/node_modules  # évite d’écraser node_modules dans l’image
+      - /app/node_modules
     depends_on:
       - postgres
 
@@ -25,7 +25,7 @@ services:
       - "4200:4200"
     volumes:
       - ./frontend:/app
-      - /app/node_modules  # idem pour Angular
+      - /app/node_modules
 
   postgres:
     image: postgres:15

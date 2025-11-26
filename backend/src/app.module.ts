@@ -7,6 +7,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PatientsModule } from './modules/patients/patients.module';
 import { AddressesModule } from './modules/addresses/addresses.module';
 import { CommonModule } from './common/common.module';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -23,5 +25,7 @@ import { CommonModule } from './common/common.module';
     AddressesModule,
     CommonModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
