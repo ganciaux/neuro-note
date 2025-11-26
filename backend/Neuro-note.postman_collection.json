@@ -4,7 +4,7 @@
 		"name": "Neuro-note",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "3232696",
-		"_collection_link": "https://winter-desert-906706.postman.co/workspace/6d7ec3d7-08cb-4b3b-869a-1fd7b33602d7/collection/3232696-3aa029bd-0fe2-4874-a748-b5efce11a6eb?action=share&source=collection_link&creator=3232696"
+		"_collection_link": "https://winter-desert-906706.postman.co/workspace/Team-Workspace~6d7ec3d7-08cb-4b3b-869a-1fd7b33602d7/collection/3232696-3aa029bd-0fe2-4874-a748-b5efce11a6eb?action=share&source=collection_link&creator=3232696"
 	},
 	"item": [
 		{
@@ -108,7 +108,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"titleCode\": \"patient_title_mr\",\n    \"firstName\": \"John 2\",\n    \"lastName\": \"Doe\",\n    \"birthDate\": \"1985-04-12T00:00:00.000Z\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"1234\"\n}",
+							"raw": "{\n    \"titleCode\": \"patient_title_mr\",\n    \"firstName\": \"John\",\n    \"lastName\": \"fffff\",\n    \"birthDate\": \"1990-04-12T00:00:00.000Z\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"1234\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -130,13 +130,73 @@
 					"response": []
 				},
 				{
+					"name": "soft-delete by id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients/soft-delete/{{patient_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients",
+								"soft-delete",
+								"{{patient_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restore by id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients/restore/{{patient_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients",
+								"restore",
+								"{{patient_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "update",
 					"request": {
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ghislain@anciaux.fr\"\n}",
+							"raw": "{\n    \"email\": \"ghislain@anciaux.fr\",\n    \"firstName\": \"sdgsdg\",\n    \"lastName\": \"xfgdsfgdsfh\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -345,7 +405,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}:{{port}}/{{api}}/patients/search?limit=5&page=2",
+							"raw": "{{url}}:{{port}}/{{api}}/patients/search?birthDate[operator]=between&birthDate[from]=1980-01-01&birthDate[to]=1984-12-31&lastName[operator]=like&lastName[value]=aaaaa&page=1&limit=5",
 							"host": [
 								"{{url}}"
 							],
@@ -357,13 +417,123 @@
 							],
 							"query": [
 								{
-									"key": "limit",
-									"value": "5"
+									"key": "birthDate[operator]",
+									"value": "between"
+								},
+								{
+									"key": "birthDate[from]",
+									"value": "1980-01-01"
+								},
+								{
+									"key": "birthDate[to]",
+									"value": "1984-12-31"
+								},
+								{
+									"key": "lastName[operator]",
+									"value": "like"
+								},
+								{
+									"key": "lastName[value]",
+									"value": "aaaaa"
 								},
 								{
 									"key": "page",
-									"value": "2"
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "count",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients/count",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/patients/deleted",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"patients",
+								"deleted"
 							]
 						}
 					},
@@ -397,6 +567,66 @@
 							"path": [
 								"{{api}}",
 								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "soft-delete by id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users/soft-delete/{{user_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users",
+								"soft-delete",
+								"{{user_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restore by id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users/restore/{{user_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users",
+								"restore",
+								"{{user_uuid}}"
 							]
 						}
 					},
@@ -565,6 +795,141 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users/search",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "count",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users/count",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/users/deleted",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"users",
+								"deleted"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -594,6 +959,66 @@
 							"path": [
 								"{{api}}",
 								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "soft-delete by id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses/soft-delete/{{address_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses",
+								"soft-delete",
+								"{{address_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restore by id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses/restore/{{address_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses",
+								"restore",
+								"{{address_uuid}}"
 							]
 						}
 					},
@@ -759,6 +1184,151 @@
 							"path": [
 								"{{api}}",
 								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "count",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses/count",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses/deleted",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses",
+								"deleted"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/addresses/search?entityType[operator]=eq&entityType[value]=address_entity_patient",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"addresses",
+								"search"
+							],
+							"query": [
+								{
+									"key": "entityType[operator]",
+									"value": "eq"
+								},
+								{
+									"key": "entityType[value]",
+									"value": "address_entity_patient"
+								}
 							]
 						}
 					},
