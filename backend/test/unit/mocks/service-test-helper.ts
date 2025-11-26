@@ -20,7 +20,7 @@ export async function createServiceTestModule<TService, TRepository>(
   return {
     module,
     service: module.get<TService>(serviceClass),
-    repository: module.get<TRepository>(repositoryClass) as any,
+    repository: module.get<TRepository>(repositoryClass),
     repositoryMock,
   };
 }

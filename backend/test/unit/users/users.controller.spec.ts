@@ -1,12 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UUID } from 'crypto';
 import { UsersController } from 'src/modules/users/controllers/users.controller';
 import { UsersService } from 'src/modules/users/services/users.service';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('UsersController', () => {
   let controller: UsersController;
+  const uuid = uuidv4();
 
   const mockUsersService = {
-    findAll: jest.fn().mockResolvedValue([{ id: 1, name: 'John' }]),
+    findAll: jest.fn().mockResolvedValue([{ id: uuid, name: 'John' }]),
   };
 
   beforeEach(async () => {
@@ -24,6 +27,6 @@ describe('UsersController', () => {
 
   it('should return all users', async () => {
     const users = await controller.findAll();
-    expect(users).toEqual([{ id: 1, name: 'John' }]);
+    expect(users).toEqual([{ id: uuid, name: 'John' }]);
   });
 });
