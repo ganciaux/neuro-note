@@ -18,7 +18,7 @@ module.exports = async () => {
 
   console.log('[E2E] PostgreSQL started at', process.env.TEST_DATABASE_URL);
 
-  const sqlDir = join(__dirname, '../db-init');
+  const sqlDir = join(__dirname, '../../db-init');
   const sqlFiles = readdirSync(sqlDir).filter((f) => f.endsWith('.sql'));
 
   const client = new Client({ connectionString: process.env.TEST_DATABASE_URL });

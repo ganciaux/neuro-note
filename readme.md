@@ -22,3 +22,7 @@ docker compose -f docker-compose.dev.yml exec backend npm run typeorm:migrate
 ./scripts/docker.sh prod      # reset-build prod
 ./scripts/docker.sh dev up    # start dev without following logs
 ./scripts/docker.sh prod logs # follow logs for prod only
+
+#jest
+npm run test:unit -- test/unit/users/users.service.spec.ts
+jest test/unit/users/users.service.spec.ts

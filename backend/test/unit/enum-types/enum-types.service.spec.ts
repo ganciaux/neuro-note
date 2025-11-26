@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
+import { EnumTypesService } from 'src/modules/enum-types/services/enum-types.service';
 
-describe('UsersService', () => {
-  let service: UsersService;
+describe('EnumTypesService', () => {
+  let service: EnumTypesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      providers: [EnumTypesService],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<EnumTypesService>(EnumTypesService);
   });
 
   it('should be defined', () => {

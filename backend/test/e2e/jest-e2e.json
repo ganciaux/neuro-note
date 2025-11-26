@@ -1,19 +1,19 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": "../",
+  "rootDir": "../../",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "globalSetup": "<rootDir>/test/setup-e2e.ts",
-  "globalTeardown": "<rootDir>/test/teardown-e2e.ts",
+  "globalSetup": "<rootDir>/test/e2e/setup-e2e.ts",
+  "globalTeardown": "<rootDir>/test/e2e/teardown-e2e.ts",
   "transformIgnorePatterns": [
     "node_modules/(?!(nanoid|slugify)/)"
   ],
   "moduleNameMapper": {
     "^@/(.*)$": "<rootDir>/src/$1"
   },
-  "setupFilesAfterEnv": ["<rootDir>/test/jest-setup.ts"],
+  "setupFilesAfterEnv": ["<rootDir>/test/e2e/jest-setup.ts"],
   "testTimeout": 30000
 }

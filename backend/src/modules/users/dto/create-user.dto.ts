@@ -36,5 +36,5 @@ export class CreateUserDto {
   @Trim()
   @MinLength(1)
   @MaxLength(256)
-  UserName: string;
+  userName: string;
 }
