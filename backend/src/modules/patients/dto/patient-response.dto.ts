@@ -34,5 +34,5 @@ export class PatientResponseDto {
 
   @Expose()
   @Type(() => AddressResponseDto)
-  addresses: AddressResponseDto[];
+  addresses?: AddressResponseDto[];
 }

@@ -1,12 +1,4 @@
-import { sanitize } from '../../../common/utils/sanitize.utils';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  DeleteDateColumn,
-  BeforeInsert,
-  BeforeUpdate,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
 import { Address } from '../../addresses/entities/address.entity';
 
 @Entity('patients')
@@ -25,13 +17,6 @@ export class Patient {
 
   @Column({ name: 'search_name', length: 256 })
   searchName: string;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  updateSearchName() {
-    const searchName = `${this.firstName}${this.lastName}`;
-    this.searchName = sanitize(searchName);
-  }
 
   @Column({ name: 'birth_date', type: 'timestamp' })
   birthDate: Date;

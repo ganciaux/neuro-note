@@ -21,7 +21,7 @@ export class User {
 
   @ManyToOne(() => EnumType)
   @JoinColumn({ name: 'role_code', referencedColumnName: 'code' })
-  role: EnumType;
+  role?: EnumType;
 
   @Column({ name: 'role_code', length: 128 })
   roleCode: string;

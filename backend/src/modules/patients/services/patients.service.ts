@@ -11,6 +11,7 @@ import { BaseService } from '../../../common/base/base.service';
 import { generateSlug } from 'src/common/utils/slug.util';
 import { CatchTypeOrmError } from 'src/common/decorators/catch-typeorm-error.decorator';
 import { toDto } from 'src/common/utils/transform-to-dto';
+import { sanitize } from 'src/common/utils/sanitize.utils';
 
 @Injectable()
 export class PatientsService extends BaseService<
@@ -35,14 +36,25 @@ export class PatientsService extends BaseService<
   @CatchTypeOrmError()
   async create(createPatientDto: CreatePatientDto): Promise<PatientResponseDto> {
     const slug = generateSlug(createPatientDto.lastName);
-
+    const searchName = sanitize(`${createPatientDto.firstName}${createPatientDto.lastName}`);
     const patient = this.patientRepo.create({
       ...createPatientDto,
       slug,
+      searchName,
     });
 
     const savedPatient = await this.patientRepo.save(patient);
 
+    return toDto(PatientResponseDto, savedPatient);
+  }
+
+  @CatchTypeOrmError()
+  async update(id: string, updatePatientDto: UpdatePatientDto): Promise<PatientResponseDto> {
+    const searchName = sanitize(`${updatePatientDto.firstName}${updatePatientDto.lastName}`);
+    const savedPatient = await this.patientRepo.save({
+      ...updatePatientDto,
+      searchName,
+    });
     return toDto(PatientResponseDto, savedPatient);
   }
 

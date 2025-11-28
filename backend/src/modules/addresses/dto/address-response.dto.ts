@@ -23,7 +23,7 @@ export class AddressResponseDto {
   postalCode: string;
 
   @Expose()
-  city: Date;
+  city: string;
 
   @Expose()
   countryCode: string;
