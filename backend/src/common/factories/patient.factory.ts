@@ -5,9 +5,9 @@ import { Patient } from '../../modules/patients/entities/patient.entity';
 import { AddressFactory } from './address.factory';
 import { PATIENT_TITLES } from './enum-values';
 import { sanitize } from '../../common/utils/sanitize.utils';
-import { CreatePatientDto } from 'src/modules/patients/dto/create-patient.dto';
-import { UpdatePatientDto } from 'src/modules/patients/dto/update-patient.dto';
-import { PatientResponseDto } from 'src/modules/patients/dto/patient-response.dto';
+import { CreatePatientDto } from '../../modules/patients/dto/create-patient.dto';
+import { UpdatePatientDto } from '../../modules/patients/dto/update-patient.dto';
+import { PatientResponseDto } from '../../modules/patients/dto/patient-response.dto';
 
 export const PatientFactory = {
   makeEntity: (overrides?: Partial<Patient>, withAddresses = true): Patient => {

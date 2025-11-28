@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PatientsService } from 'src/modules/patients/services/patients.service';
+import { PatientsService } from '../../../src/modules/patients/services/patients.service';
 
 
 describe('PatientsService', () => {

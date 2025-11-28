@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { Address } from '../../modules/addresses/entities/address.entity';
 import { ADDRESS_ENTITY, ADDRESS_TYPE, ADDRESS_COUNTRY } from './enum-values';
-import { CreateAddressDto } from 'src/modules/addresses/dto/create-address.dto';
-import { UpdateAddressDto } from 'src/modules/addresses/dto/update-address.dto';
-import { AddressResponseDto } from 'src/modules/addresses/dto/address-response.dto';
+import { CreateAddressDto } from '../../modules/addresses/dto/create-address.dto';
+import { UpdateAddressDto } from '../../modules/addresses/dto/update-address.dto';
+import { AddressResponseDto } from '../../modules/addresses/dto/address-response.dto';
 
 export const AddressFactory = {
   makeEntity: (overrides?: Partial<Address>): Address => ({

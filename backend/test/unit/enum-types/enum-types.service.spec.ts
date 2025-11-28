@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EnumTypesService } from 'src/modules/enum-types/services/enum-types.service';
+import { EnumTypesService } from '../../../src/modules/enum-types/services/enum-types.service';
 
 describe('EnumTypesService', () => {
   let service: EnumTypesService;

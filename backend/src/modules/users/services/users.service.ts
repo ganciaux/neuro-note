@@ -8,7 +8,7 @@ import { UsersRepository } from '../repositories/users.repository';
 import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
 import { toDto, toDtoArray } from '../../../common/utils/transform-to-dto';
 import { BaseService } from '../../../common/base/base.service';
-import { generateSlug } from 'src/common/utils/slug.util';
+import { generateSlug } from '../../../common/utils/slug.util';
 
 @Injectable()
 export class UsersService extends BaseService<User, UserResponseDto, CreateUserDto, UpdateUserDto> {

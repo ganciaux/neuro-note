@@ -8,10 +8,10 @@ import { AddressesRepository } from '../../addresses/repositories/addresses.repo
 import { AddressesService } from '../../addresses/services/addresses.service';
 import { attachRelation } from '../../../common/utils/attach-relation.utils';
 import { BaseService } from '../../../common/base/base.service';
-import { generateSlug } from 'src/common/utils/slug.util';
-import { CatchTypeOrmError } from 'src/common/decorators/catch-typeorm-error.decorator';
-import { toDto } from 'src/common/utils/transform-to-dto';
-import { sanitize } from 'src/common/utils/sanitize.utils';
+import { generateSlug } from '../../../common/utils/slug.util';
+import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
+import { toDto } from '../../../common/utils/transform-to-dto';
+import { sanitize } from '../../../common/utils/sanitize.utils';
 
 @Injectable()
 export class PatientsService extends BaseService<

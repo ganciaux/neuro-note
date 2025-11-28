@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UUID } from 'crypto';
-import { UsersController } from 'src/modules/users/controllers/users.controller';
-import { UsersService } from 'src/modules/users/services/users.service';
+import { UsersController } from '../../../src/modules/users/controllers/users.controller';
+import { UsersService } from '../../../src/modules/users/services/users.service';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('UsersController', () => {

@@ -1,8 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
 import { closeApp, adminToken, API_PREFIX } from './jest-e2e-utils';
 import { PatientFactory } from '../../src/common/factories/patient.factory';
-import { PatientResponseDto } from 'src/modules/patients/dto/patient-response.dto';
-import { postAndExpect } from 'test/utils/app-test.util';
+import { PatientResponseDto } from '../../src/modules/patients/dto/patient-response.dto';
+import { postAndExpect } from '../../test/utils/app-test.util';
 
 describe('Patient E2E', () => {
   afterAll(async () => {

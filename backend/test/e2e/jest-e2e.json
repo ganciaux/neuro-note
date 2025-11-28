@@ -9,7 +9,7 @@
   "globalSetup": "<rootDir>/test/e2e/setup-e2e.ts",
   "globalTeardown": "<rootDir>/test/e2e/teardown-e2e.ts",
   "transformIgnorePatterns": [
-    "node_modules/(?!(nanoid|slugify)/)"
+    "node_modules/(?!(nanoid|slugify|@faker-js/faker)/)"
   ],
   "moduleNameMapper": {
     "^@/(.*)$": "<rootDir>/src/$1"
