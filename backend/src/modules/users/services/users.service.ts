@@ -8,6 +8,7 @@ import { UsersRepository } from '../repositories/users.repository';
 import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
 import { toDto, toDtoArray } from '../../../common/utils/transform-to-dto';
 import { BaseService } from '../../../common/base/base.service';
+import { generateSlug } from 'src/common/utils/slug.util';
 
 @Injectable()
 export class UsersService extends BaseService<User, UserResponseDto, CreateUserDto, UpdateUserDto> {
@@ -27,10 +28,13 @@ export class UsersService extends BaseService<User, UserResponseDto, CreateUserD
       throw new ConflictException(`Email ${createUserDto.email} already exists`);
     }
 
+    const slug = generateSlug(createUserDto.userName);
+
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
     const user = this.userRepo.create({
       ...createUserDto,
+      slug,
       passwordHash: hashedPassword,
     });
 

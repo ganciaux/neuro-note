@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { BaseController } from '../../../common/base/base.controller';
 import { EnumType } from '../entities/enum-type.entity';
-import { EnumTypeResponseDto } from '../dto/enum-types-response.dto';
+import { EnumTypeResponseDto } from '../dto/enum-type-response.dto';
 import { CreateEnumTypeDto } from '../dto/create-enum-type.dto';
 import { UpdateEnumTypeDto } from '../dto/update-enum-type.dto';
 import { EnumTypesService } from '../services/enum-types.service';

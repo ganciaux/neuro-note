@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EnumType } from '../entities/enum-type.entity';
-import { EnumTypeResponseDto } from '../dto/enum-types-response.dto';
+import { EnumTypeResponseDto } from '../dto/enum-type-response.dto';
 import { CreateEnumTypeDto } from '../dto/create-enum-type.dto';
 import { UpdateEnumTypeDto } from '../dto/update-enum-type.dto';
 import { EnumTypesRepository } from '../repositories/enum-types.repository';
