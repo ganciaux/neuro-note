@@ -1,19 +1,20 @@
-import request from 'supertest';
-import { getApp, closeApp } from './jest-e2e-utils';
+import { HttpStatus } from '@nestjs/common';
+import { UserResponseDto } from '../../src/modules/users/dto/user-response.dto';
+import { adminToken, API_PREFIX, closeApp } from './jest-e2e-utils';
+import { getAndExpect } from '../../test/utils/app-test.util';
 
 describe('Users E2E', () => {
-  let app;
-
-  beforeAll(async () => {
-    app = await getApp();
-  });
-
   afterAll(async () => {
     await closeApp();
   });
 
   it('GET /users', async () => {
-    const res = await request(app.getHttpServer()).get(`${process.env.API_PREFIX}/users`);
-    expect(res.status).toBe(200);
+    const users = await getAndExpect<UserResponseDto[]>(
+      `${API_PREFIX}/users`,
+      { token: adminToken },
+      HttpStatus.OK,
+    );
+
+    expect(Array.isArray(users)).toBe(true);
   });
 });
