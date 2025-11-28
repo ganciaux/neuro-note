@@ -1,5 +1,3 @@
-import { nanoid } from 'nanoid';
-import slugify from 'slugify';
 import { sanitize } from '../../../common/utils/sanitize.utils';
 import {
   Entity,
@@ -51,16 +49,10 @@ export class Patient {
   updatedAt: Date;
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
-  deletedAt?: Date;
+  deletedAt?: Date | null;
 
   @Column({ unique: true })
   slug: string;
 
-  @BeforeInsert()
-  generateSlug() {
-    const baseSlug = slugify(this.lastName, { lower: true });
-    this.slug = `${baseSlug}-${nanoid(4)}`;
-  }
-
-  addresses: Address[];
+  addresses?: Address[];
 }

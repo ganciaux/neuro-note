@@ -8,6 +8,9 @@ import { AddressesRepository } from '../../addresses/repositories/addresses.repo
 import { AddressesService } from '../../addresses/services/addresses.service';
 import { attachRelation } from '../../../common/utils/attach-relation.utils';
 import { BaseService } from '../../../common/base/base.service';
+import { generateSlug } from 'src/common/utils/slug.util';
+import { CatchTypeOrmError } from 'src/common/decorators/catch-typeorm-error.decorator';
+import { toDto } from 'src/common/utils/transform-to-dto';
 
 @Injectable()
 export class PatientsService extends BaseService<
@@ -27,6 +30,20 @@ export class PatientsService extends BaseService<
     private readonly addressService: AddressesService,
   ) {
     super(patientRepo);
+  }
+
+  @CatchTypeOrmError()
+  async create(createPatientDto: CreatePatientDto): Promise<PatientResponseDto> {
+    const slug = generateSlug(createPatientDto.lastName);
+
+    const patient = this.patientRepo.create({
+      ...createPatientDto,
+      slug,
+    });
+
+    const savedPatient = await this.patientRepo.save(patient);
+
+    return toDto(PatientResponseDto, savedPatient);
   }
 
   protected async extendEntity(patient: Patient): Promise<Patient> {
