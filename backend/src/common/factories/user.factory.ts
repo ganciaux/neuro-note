@@ -91,16 +91,4 @@ export const UserFactory = {
       ...overrides,
     };
   },
-
-  makeRegisterDto: (overrides?: Partial<RegisterDto>): RegisterDto => {
-    const base: RegisterDto = {
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
-      userName: faker.internet.username().toLowerCase(),
-      lastName: faker.person.lastName(),
-      firstName: faker.person.firstName(),
-      password: 'Password123!',
-    };
-
-    return { ...base, ...overrides };
-  },
 };

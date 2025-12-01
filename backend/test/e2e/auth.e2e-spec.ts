@@ -4,7 +4,7 @@ import { API_PREFIX } from '../e2e/jest-e2e-utils';
 import { assertedPost, assertedGet } from '../utils/request-helpers';
 import { LoginResponseDto } from '../../src/modules/auth/dto/login-response.dto';
 import { JwtUser } from '../../src/modules/auth/models';
-import { UserFactory } from '../../src/common/factories/user.factory';
+import { AuthFactory } from '../../test/factories/auth.factory';
 
 describeE2E('Auth E2E', (getHelpers) => {
   describe('POST /auth/login', () => {
@@ -73,7 +73,7 @@ describeE2E('Auth E2E', (getHelpers) => {
 
   describe('POST /auth/register', () => {
     it('should register a new user', async () => {
-      const registerDto = UserFactory.makeRegisterDto();
+      const registerDto = AuthFactory.makeRegisterDto();
 
       const res = await assertedPost<LoginResponseDto>(
         `${API_PREFIX}/auth/register`,
@@ -89,7 +89,7 @@ describeE2E('Auth E2E', (getHelpers) => {
 
     it('should fail if email already exists', async () => {
       const { user } = getHelpers();
-      const registerDto = { ...UserFactory.makeRegisterDto(), email: user.credentials.email };
+      const registerDto = { ...AuthFactory.makeRegisterDto(), email: user.credentials.email };
 
       await assertedPost(`${API_PREFIX}/auth/register`, registerDto, {}, HttpStatus.CONFLICT);
     });

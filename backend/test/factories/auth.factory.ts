@@ -3,6 +3,8 @@ import { UserFactory } from '../../src/common/factories/user.factory';
 import { USER_ROLES } from '../../src/common/factories/enum-values';
 import { AuthFactoryResult } from '../../test/types/auth-factory.types';
 import { UsersService } from '../../src/modules/users/services/users.service';
+import { RegisterDto } from 'src/modules/auth/dto/register.dto';
+import { faker } from '@faker-js/faker';
 
 export class AuthFactory {
   static async registerAndLogin(
@@ -40,5 +42,17 @@ export class AuthFactory {
     authService: AuthService,
   ): Promise<AuthFactoryResult> {
     return this.registerAndLogin(USER_ROLES.STAFF, userService, authService);
+  }
+
+  static makeRegisterDto(overrides?: Partial<RegisterDto>): RegisterDto {
+    const base: RegisterDto = {
+      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      userName: faker.internet.username().toLowerCase(),
+      lastName: faker.person.lastName(),
+      firstName: faker.person.firstName(),
+      password: 'Password123!',
+    };
+
+    return { ...base, ...overrides };
   }
 }
