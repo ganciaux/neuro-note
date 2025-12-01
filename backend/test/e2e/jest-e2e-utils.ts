@@ -1,4 +1,3 @@
-// test/e2e/jest-e2e-utils.ts
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppTestModule } from './app-test.module';
