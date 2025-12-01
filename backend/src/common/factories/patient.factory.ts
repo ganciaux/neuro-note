@@ -22,7 +22,7 @@ export const PatientFactory = {
     base.searchName = sanitize(`${firstName}${lastName}`);
     base.birthDate = faker.date.birthdate({ min: 18, max: 90, mode: 'age' });
     base.phone = faker.phone.number();
-    base.email = faker.internet.email();
+    base.email = `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`;
     base.createdAt = new Date();
     base.updatedAt = new Date();
     base.deletedAt = undefined;
@@ -46,7 +46,7 @@ export const PatientFactory = {
       lastName,
       birthDate: faker.date.birthdate({ min: 18, max: 90, mode: 'age' }),
       phone: faker.phone.number(),
-      email: faker.internet.email(),
+      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
     };
 
     return { ...base, ...overrides };
@@ -60,7 +60,7 @@ export const PatientFactory = {
       firstName,
       lastName,
       phone: faker.phone.number(),
-      email: faker.internet.email(),
+      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
     };
 
     return { ...base, ...overrides };
@@ -77,7 +77,7 @@ export const PatientFactory = {
       lastName,
       birthDate: faker.date.birthdate({ min: 18, max: 90, mode: 'age' }),
       phone: faker.phone.number(),
-      email: faker.internet.email(),
+      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
       slug: `${slugify(lastName, { lower: true })}-${nanoid(4)}`,
       createdAt: new Date(),
       updatedAt: new Date(),

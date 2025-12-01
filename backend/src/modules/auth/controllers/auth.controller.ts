@@ -5,10 +5,17 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { LoginResponseDto } from '../dto/login-response.dto';
 import type { JwtUser } from '../models/jwt-user.model';
 import type { AuthenticatedRequest } from '../models/auth-request';
+import { RegisterDto } from '../dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('register')
+  @HttpCode(HttpStatus.OK)
+  register(@Body() dto: RegisterDto): Promise<LoginResponseDto> {
+    return this.authService.register(dto);
+  }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)

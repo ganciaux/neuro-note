@@ -1,11 +1,13 @@
+import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../../users/services/users.service';
-import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from '../models';
-import { LoginResponseDto } from '../dto/login-response.dto';
-import { toDto } from '../../../common/utils/transform-to-dto';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
 import { User } from '../../users/entities/user.entity';
+import { JwtPayload } from '../models';
+import { LoginResponseDto } from '../dto/login-response.dto';
+import { RegisterDto } from '../dto/register.dto';
+import { toDto } from '../../../common/utils/transform-to-dto';
+import { USER_ROLES } from '../../../common/factories/enum-values';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +38,20 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign<JwtPayload>(payload),
       user: toDto(UserResponseDto, user),
+    };
+  }
+
+  async register(dto: RegisterDto): Promise<LoginResponseDto> {
+    const user = await this.usersService.create({
+      ...dto,
+      roleCode: USER_ROLES.STAFF,
+    });
+
+    const token = this.jwtService.sign({ id: user.id, role: USER_ROLES.STAFF });
+
+    return {
+      user,
+      accessToken: token,
     };
   }
 

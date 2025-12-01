@@ -5,6 +5,7 @@ import { UpdateUserDto } from '../../modules/users/dto/update-user.dto';
 import { UserResponseDto } from '../../modules/users/dto/user-response.dto';
 import { generateSlug } from '../../common/utils/slug.util';
 import { USER_ROLES } from './enum-values';
+import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 
 export const UserFactory = {
   makeEntity: (overrides?: Partial<User>): User => {
@@ -14,7 +15,7 @@ export const UserFactory = {
 
     const base: User = {
       id: faker.string.uuid(),
-      email: faker.internet.email().toLowerCase(),
+      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
       firstName,
       lastName,
       userName,
@@ -66,7 +67,7 @@ export const UserFactory = {
 
     const base: UserResponseDto = {
       id: faker.string.uuid(),
-      email: faker.internet.email().toLowerCase(),
+      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
       firstName,
       lastName,
       userName: faker.internet.username().toLowerCase(),
@@ -89,5 +90,17 @@ export const UserFactory = {
       userName: undefined,
       ...overrides,
     };
+  },
+
+  makeRegisterDto: (overrides?: Partial<RegisterDto>): RegisterDto => {
+    const base: RegisterDto = {
+      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      userName: faker.internet.username().toLowerCase(),
+      lastName: faker.person.lastName(),
+      firstName: faker.person.firstName(),
+      password: 'Password123!',
+    };
+
+    return { ...base, ...overrides };
   },
 };

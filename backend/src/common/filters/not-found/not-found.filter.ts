@@ -1,4 +1,10 @@
-import { ArgumentsHost, Catch, ExceptionFilter, NotFoundException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+  NotFoundException,
+} from '@nestjs/common';
 import { Response } from 'express';
 
 @Catch()
@@ -8,8 +14,8 @@ export class NotFoundFilter implements ExceptionFilter {
     const res = ctx.getResponse<Response>();
 
     if (exception instanceof NotFoundException) {
-      res.status(404).json({
-        statusCode: 404,
+      res.status(HttpStatus.NOT_FOUND).json({
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Route not found',
         error: 'Not Found',
       });

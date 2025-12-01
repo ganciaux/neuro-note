@@ -9,12 +9,17 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BaseService } from './base.service';
 import { ObjectLiteral } from 'typeorm';
 import { FilterOptionsDto } from '../query-filters/filter-options.dto';
 import { toDto } from '../utils/transform-to-dto';
+import { UsePermission } from '../decorators/use-permission.decorator';
+import { JwtAuthGuard } from '../../../src/modules/auth/guards/jwt-auth.guard';
+import { PermissionGuard } from '../guards/permission.guard';
 
+@UseGuards(JwtAuthGuard, PermissionGuard)
 export abstract class BaseController<
   Entity extends ObjectLiteral,
   ResponseDto,
@@ -34,6 +39,7 @@ export abstract class BaseController<
   protected afterDelete?(id: string): Promise<void> | void {}
 
   @Post()
+  @UsePermission('create')
   async create(@Body() dto: CreateDto): Promise<ResponseDto> {
     if (this.beforeCreate) await this.beforeCreate(dto);
     const result = await this.service.create(dto);
@@ -42,21 +48,25 @@ export abstract class BaseController<
   }
 
   @Get()
+  @UsePermission('findAll')
   findAll(): Promise<ResponseDto[]> {
     return this.service.findAll();
   }
 
   @Get('count')
+  @UsePermission('count')
   count(): Promise<number> {
     return this.service.count();
   }
 
   @Get('deleted')
+  @UsePermission('findDeleted')
   findDeleted(): Promise<ResponseDto[]> {
     return this.service.findDeleted();
   }
 
   @Get('search')
+  @UsePermission('search')
   async search<FilterDto extends FilterOptionsDto>(@Query() query: FilterDto) {
     const [entities, total] = await this.service.search(query);
 
@@ -71,22 +81,26 @@ export abstract class BaseController<
   }
 
   @Post('soft-delete/:id')
+  @UsePermission('softDelete')
   @HttpCode(HttpStatus.NO_CONTENT)
   async softDelete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     await this.service.softDelete(id);
   }
 
   @Post('restore/:id')
+  @UsePermission('restore')
   restore(@Param('id', new ParseUUIDPipe()) id: string): Promise<ResponseDto> {
     return this.service.restore(id);
   }
 
   @Get(':id')
+  @UsePermission('findOne')
   findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<ResponseDto> {
     return this.service.findOne(id);
   }
 
   @Patch(':id')
+  @UsePermission('update')
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateDto,
@@ -98,6 +112,7 @@ export abstract class BaseController<
   }
 
   @Delete(':id')
+  @UsePermission('delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     if (this.beforeDelete) await this.beforeDelete(id);

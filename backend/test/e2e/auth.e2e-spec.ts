@@ -4,6 +4,7 @@ import { API_PREFIX } from '../e2e/jest-e2e-utils';
 import { assertedPost, assertedGet } from '../utils/request-helpers';
 import { LoginResponseDto } from '../../src/modules/auth/dto/login-response.dto';
 import { JwtUser } from '../../src/modules/auth/models';
+import { UserFactory } from '../../src/common/factories/user.factory';
 
 describeE2E('Auth E2E', (getHelpers) => {
   describe('POST /auth/login', () => {
@@ -67,6 +68,30 @@ describeE2E('Auth E2E', (getHelpers) => {
 
     it('should fail without token', async () => {
       await assertedGet(`${API_PREFIX}/auth/me`, {}, HttpStatus.UNAUTHORIZED);
+    });
+  });
+
+  describe('POST /auth/register', () => {
+    it('should register a new user', async () => {
+      const registerDto = UserFactory.makeRegisterDto();
+
+      const res = await assertedPost<LoginResponseDto>(
+        `${API_PREFIX}/auth/register`,
+        registerDto,
+        {},
+        HttpStatus.OK,
+      );
+
+      expect(res.accessToken).toBeDefined();
+      expect(res.user.email).toBe(registerDto.email);
+      expect(res.user.userName).toBe(registerDto.userName);
+    });
+
+    it('should fail if email already exists', async () => {
+      const { user } = getHelpers();
+      const registerDto = { ...UserFactory.makeRegisterDto(), email: user.credentials.email };
+
+      await assertedPost(`${API_PREFIX}/auth/register`, registerDto, {}, HttpStatus.CONFLICT);
     });
   });
 });
