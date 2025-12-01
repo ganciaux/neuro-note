@@ -9,7 +9,5 @@
   "moduleNameMapper": {
     "^src/(.*)$": "<rootDir>/src/$1"
   },
-  "transformIgnorePatterns": [
-    "node_modules/(?!(nanoid|slugify)/)"
-  ]
+  "transformIgnorePatterns": ["node_modules/(?!(nanoid|slugify|@faker-js/faker)/)"]
 }
