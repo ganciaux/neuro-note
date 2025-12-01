@@ -1,31 +1,66 @@
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { INestApplication } from '@nestjs/common';
-import { getApp } from '../../test/e2e/jest-e2e-utils';
+import { getApp } from '../e2e/jest-e2e-utils';
 
-export async function assertedGet(url: string, expected: number) {
+export type RequestOptions = {
+  token?: string;
+  headers?: Record<string, string>;
+};
+
+async function performRequest<T>(
+  method: 'get' | 'post' | 'patch' | 'delete',
+  url: string,
+  payload: any,
+  expectedStatus: number,
+  options: RequestOptions,
+): Promise<T> {
   const app: INestApplication = await getApp();
-  const res = await request(app.getHttpServer()).get(url);
-  expect(res.status).toBe(expected);
-  return res;
+  const http = request(app.getHttpServer());
+
+  let req = http[method](url);
+
+  if (options.token) {
+    req = req.set('Authorization', `Bearer ${options.token}`);
+  }
+
+  if (options.headers) {
+    for (const [k, v] of Object.entries(options.headers)) {
+      req = req.set(k, v);
+    }
+  }
+
+  if (payload) {
+    req = req.send(payload);
+  }
+
+  const res = await req.expect(expectedStatus);
+
+  if (!('body' in res)) {
+    throw new Error(`Missing body for ${method.toUpperCase()} ${url}`);
+  }
+
+  return res.body as T;
 }
 
-export async function assertedPost(url: string, body: any, expected: number) {
-  const app: INestApplication = await getApp();
-  const res = await request(app.getHttpServer()).post(url).send(body);
-  expect(res.status).toBe(expected);
-  return res;
-}
+export const assertedGet = <T>(url: string, options: RequestOptions = {}, status = HttpStatus.OK) =>
+  performRequest<T>('get', url, null, status, options);
 
-export async function assertedPatch(url: string, body: any, expected: number) {
-  const app: INestApplication = await getApp();
-  const res = await request(app.getHttpServer()).patch(url).send(body);
-  expect(res.status).toBe(expected);
-  return res;
-}
+export const assertedPost = <T>(
+  url: string,
+  payload: any,
+  options: RequestOptions = {},
+  status = HttpStatus.CREATED,
+) => performRequest<T>('post', url, payload, status, options);
 
-export async function assertedDelete(url: string, expected: number) {
-  const app: INestApplication = await getApp();
-  const res = await request(app.getHttpServer()).delete(url);
-  expect(res.status).toBe(expected);
-  return res;
-}
+export const assertedPatch = <T>(
+  url: string,
+  payload: any,
+  options: RequestOptions = {},
+  status = HttpStatus.OK,
+) => performRequest<T>('patch', url, payload, status, options);
+
+export const assertedDelete = (
+  url: string,
+  options: RequestOptions = {},
+  status = HttpStatus.OK,
+): Promise<void> => performRequest<void>('delete', url, null, status, options);
