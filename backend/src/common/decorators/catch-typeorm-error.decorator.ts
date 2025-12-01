@@ -10,6 +10,7 @@ export function CatchTypeOrmError() {
       try {
         return await original.apply(this, args);
       } catch (exception) {
+        const methodName = `${target.constructor.name}#${propertyKey}`;
         let status: 'CONFLICT' | 'BAD_REQUEST' | 'UNKNOWN' = 'UNKNOWN';
         let message = 'Database error';
 
@@ -25,7 +26,7 @@ export function CatchTypeOrmError() {
         }
 
         logError(exception, 'CatchTypeOrmError', {
-          method: propertyKey,
+          method: methodName,
           message,
         });
 
