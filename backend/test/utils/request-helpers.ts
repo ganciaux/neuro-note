@@ -1,6 +1,6 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
-import { getApp } from '../e2e/jest-e2e-utils';
+import { E2ETestContext } from '../e2e/jest-e2e-utils';
 
 export type RequestOptions = {
   token?: string;
@@ -11,16 +11,21 @@ async function performRequest<T>(
   method: 'get' | 'post' | 'patch' | 'delete',
   url: string,
   payload: any,
-  expectedStatus: number,
+  expectedStatus: HttpStatus,
   options: RequestOptions,
 ): Promise<T> {
-  const app: INestApplication = await getApp();
-  const http = request(app.getHttpServer());
+  const app = E2ETestContext.instance.app;
+  if (!app) {
+    throw new Error('App is not initialized. Call E2ETestContext.instance.setup() first.');
+  }
 
-  let req = http[method](url);
+  let req = request(app.getHttpServer())[method](url);
 
   if (options.token) {
-    req = req.set('Authorization', `Bearer ${options.token}`);
+    req = req.set(
+      'Authorization',
+      options.token.startsWith('Bearer ') ? options.token : `Bearer ${options.token}`,
+    );
   }
 
   if (options.headers) {
@@ -35,11 +40,25 @@ async function performRequest<T>(
 
   const res = await req.expect(expectedStatus);
 
-  if (!('body' in res)) {
-    throw new Error(`Missing body for ${method.toUpperCase()} ${url}`);
+  if (expectedStatus === HttpStatus.NO_CONTENT) {
+    return undefined as unknown as T;
   }
 
-  return res.body as T;
+  const contentType = res.header['content-type'] || '';
+
+  if (contentType.includes('application/json')) {
+    if (!res.body) {
+      throw new Error(`Missing JSON body for ${method.toUpperCase()} ${url}`);
+    }
+    return res.body as T;
+  } else if (contentType.startsWith('text/')) {
+    if (!res.text) {
+      throw new Error(`Missing text body for ${method.toUpperCase()} ${url}`);
+    }
+    return res.text as unknown as T;
+  } else {
+    return undefined as unknown as T;
+  }
 }
 
 export const assertedGet = <T>(url: string, options: RequestOptions = {}, status = HttpStatus.OK) =>
@@ -62,5 +81,5 @@ export const assertedPatch = <T>(
 export const assertedDelete = (
   url: string,
   options: RequestOptions = {},
-  status = HttpStatus.OK,
+  status = HttpStatus.NO_CONTENT,
 ): Promise<void> => performRequest<void>('delete', url, null, status, options);

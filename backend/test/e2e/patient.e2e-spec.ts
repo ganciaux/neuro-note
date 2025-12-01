@@ -1,21 +1,19 @@
 import { HttpStatus } from '@nestjs/common';
-import { closeApp, adminToken, API_PREFIX } from './jest-e2e-utils';
 import { PatientFactory } from '../../src/common/factories/patient.factory';
 import { PatientResponseDto } from '../../src/modules/patients/dto/patient-response.dto';
 import { assertedPost } from '../../test/utils/request-helpers';
+import { describeE2E } from './e2e-setup';
+import { API_PREFIX } from '../e2e/jest-e2e-utils';
 
-describe('Patient E2E', () => {
-  afterAll(async () => {
-    await closeApp();
-  });
-
+describeE2E('Users E2E', (getHelpers) => {
   it('should create a patient', async () => {
+    const { admin } = getHelpers();
     const patientDto = PatientFactory.makeCreateDto();
 
     const patient = await assertedPost<PatientResponseDto>(
       `${API_PREFIX}/patients`,
       { ...patientDto },
-      { token: adminToken },
+      { token: admin.bearer },
       HttpStatus.CREATED,
     );
 

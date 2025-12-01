@@ -1,22 +1,20 @@
-import request from 'supertest';
-import { getApp, closeApp } from './jest-e2e-utils';
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
+import { API_PREFIX, E2ETestContext } from '../e2e/jest-e2e-utils';
+import { assertedGet } from '../../test/utils/request-helpers';
 
 describe('App E2E', () => {
-  let app: INestApplication;
-  const API_PREFIX = process.env.API_PREFIX || '/api/v1';
+  const ctx = E2ETestContext.instance;
 
   beforeAll(async () => {
-    app = await getApp();
+    await ctx.setup();
   });
 
   afterAll(async () => {
-    await closeApp();
+    await ctx.close();
   });
 
   it(`GET ${API_PREFIX} (hello world!)`, async () => {
-    const res = await request(app.getHttpServer()).get(`${API_PREFIX}`);
-    expect(res.status).toBe(200);
-    expect(res.text).toContain('Hello World!');
+    const res = await assertedGet<string>(`${API_PREFIX}`, {}, HttpStatus.OK);
+    expect(res).toContain('Hello World!');
   });
 });

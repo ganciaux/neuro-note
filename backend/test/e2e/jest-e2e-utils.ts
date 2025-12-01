@@ -1,31 +1,54 @@
+// test/e2e/jest-e2e-utils.ts
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppTestModule } from './app-test.module';
-import { UserFactory } from '../../src/common/factories/user.factory';
-import { USER_ROLES } from '../../src/common/factories/enum-values';
+import { AuthFactory } from '../factories/auth.factory';
+import { AuthFactoryResult } from '../types/auth-factory.types';
+import { UsersService } from '../../src/modules/users/services/users.service';
+import { AuthService } from '../../src/modules/auth/services/auth.service';
 
-let app: INestApplication;
 export const API_PREFIX = process.env.API_PREFIX || '/api/v1';
 
-export const adminUser = UserFactory.makeEntity({ roleCode: USER_ROLES.ADMIN });
-export const adminToken = 'Bearer MOCK_ADMIN_JWT_TOKEN';
+export class E2ETestContext {
+  private static _instance: E2ETestContext;
 
-export const getApp = async (): Promise<INestApplication> => {
-  if (!app) {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppTestModule],
-    }).compile();
+  public app?: INestApplication;
+  public admin?: AuthFactoryResult;
+  public user?: AuthFactoryResult;
 
-    app = moduleFixture.createNestApplication();
-    app.setGlobalPrefix(API_PREFIX);
-    await app.init();
+  private constructor() {}
+
+  public static get instance(): E2ETestContext {
+    if (!this._instance) {
+      this._instance = new E2ETestContext();
+    }
+    return this._instance;
   }
-  return app;
-};
 
-export const closeApp = async () => {
-  if (app) {
-    await app.close();
-    app = undefined;
+  public async setup(): Promise<void> {
+    if (!this.app) {
+      const moduleFixture: TestingModule = await Test.createTestingModule({
+        imports: [AppTestModule],
+      }).compile();
+
+      this.app = moduleFixture.createNestApplication();
+      this.app.setGlobalPrefix(API_PREFIX);
+      await this.app.init();
+
+      const usersService = this.app.get(UsersService);
+      const authService = this.app.get(AuthService);
+
+      this.admin = await AuthFactory.admin(usersService, authService);
+      this.user = await AuthFactory.user(usersService, authService);
+    }
   }
-};
+
+  public async close(): Promise<void> {
+    if (this.app) {
+      await this.app.close();
+      this.app = undefined;
+      this.admin = undefined;
+      this.user = undefined;
+    }
+  }
+}
