@@ -1,0 +1,18 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "../../",
+  "testEnvironment": "node",
+  "testRegex": ".int-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "globalSetup": "<rootDir>/test/int/setup-int.ts",
+  "globalTeardown": "<rootDir>/test/int/teardown-int.ts",
+  "transformIgnorePatterns": [
+    "node_modules/(?!(nanoid|slugify|@faker-js/faker)/)"
+  ],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1"
+  },
+  "testTimeout": 30000
+}
