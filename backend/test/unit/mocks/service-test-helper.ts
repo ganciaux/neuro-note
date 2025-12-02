@@ -6,7 +6,7 @@ export async function createServiceTestModule<TService, TRepository>(
   repositoryClass: new (...args: any[]) => TRepository,
   customMock?: any,
 ) {
-  const repositoryMock = customMock ?? custcreateMockRepository();
+  const repositoryMock = customMock ?? createMockRepository();
 
   const module: TestingModule = await Test.createTestingModule({
     providers: [

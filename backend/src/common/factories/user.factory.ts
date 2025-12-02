@@ -5,7 +5,6 @@ import { UpdateUserDto } from '../../modules/users/dto/update-user.dto';
 import { UserResponseDto } from '../../modules/users/dto/user-response.dto';
 import { generateSlug } from '../../common/utils/slug.util';
 import { USER_ROLES } from './enum-values';
-import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 
 export const UserFactory = {
   makeEntity: (overrides?: Partial<User>): User => {
@@ -31,6 +30,34 @@ export const UserFactory = {
     };
 
     return { ...base, ...overrides };
+  },
+
+  makeEntityWithoutPassword: (overrides?: Partial<User>): User => {
+    const user = UserFactory.makeEntity(overrides);
+    delete user.passwordHash;
+    return user;
+  },
+
+  makeEntityForCreate: (
+    overrides?: Partial<User>,
+  ): Omit<User, 'id' | 'createdAt' | 'updatedAt'> => {
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const userName = faker.internet.username();
+
+    const base = {
+      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      firstName,
+      lastName,
+      userName,
+      roleCode: USER_ROLES.ADMIN,
+      role: undefined,
+      slug: generateSlug(`${firstName}-${lastName}`),
+      passwordHash: '$2b$10$abcdefghijklmnopqrstuv12345678901234567890123456789',
+      deletedAt: undefined,
+    };
+
+    return { ...base, ...overrides } as Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
   },
 
   makeCreateDto: (overrides?: Partial<CreateUserDto>): CreateUserDto => {
