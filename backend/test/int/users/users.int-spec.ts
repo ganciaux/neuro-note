@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UsersModule } from '../../../src/modules/users/users.module';
 import { CommonModule } from '../../../src/common/common.module';
@@ -6,7 +6,7 @@ import { UsersRepository } from '../../../src/modules/users/repositories/users.r
 import { UsersService } from '../../../src/modules/users/services/users.service';
 import { setupIntegration } from '../setup-helper';
 import { UserFactory } from '../../../src/common/factories/user.factory';
-import { toDto, toDtoArray } from '../../../src/common/utils/transform-to-dto';
+import { toDto } from '../../../src/common/utils/transform-to-dto';
 import { UserResponseDto } from '../../../src/modules/users/dto/user-response.dto';
 
 describe('Users Integration Test', () => {
@@ -68,5 +68,61 @@ describe('Users Integration Test', () => {
     expect(users).not.toBeNull();
     const count = await usersRepository.count({ where: { email: dto.email } });
     expect(count).toBe(1);
+  });
+
+  describe('findBySlug', () => {
+    it('returns the user when slug exists', async () => {
+      const dto = UserFactory.makeCreateDto();
+
+      const created = await usersService.create(dto);
+
+      const result = await usersService.findBySlug(created.slug);
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(created.id);
+      expect(result.slug).toBe(created.slug);
+    });
+
+    it('throws NotFoundException when slug does not exist', async () => {
+      await expect(usersService.findBySlug('unknown-slug')).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('validatePassword', () => {
+    it('returns true when password matches', async () => {
+      const password = 'secret123';
+
+      const dto = UserFactory.makeCreateDto({ password });
+
+      const created = await usersService.create(dto);
+      const userInDb = await usersRepository.findByEmailWithPassword(created.email);
+
+      const result = await usersService.validatePassword(userInDb!, password);
+
+      expect(result).toBe(true);
+    });
+
+    it('returns false when password does NOT match', async () => {
+      const password = 'secret123';
+      const dto = UserFactory.makeCreateDto({ password });
+
+      const created = await usersService.create(dto);
+      const userInDb = await usersRepository.findByEmailWithPassword(created.email);
+
+      const result = await usersService.validatePassword(userInDb!, 'wrongpass');
+
+      expect(result).toBe(false);
+    });
+
+    it('throws when passwordHash is missing', async () => {
+      const password = 'secret123';
+
+      const dto = UserFactory.makeCreateDto({ password });
+
+      const created = await usersService.create(dto);
+      const userInDb = await usersRepository.findOneBy({ id: created.id });
+
+      await expect(usersService.validatePassword(userInDb, 'xxx')).rejects.toThrow(Error);
+    });
   });
 });

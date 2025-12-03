@@ -22,12 +22,4 @@ export class UsersRepository extends Repository<User> {
   async findBySlug(slug: string): Promise<User | null> {
     return this.findOneBy({ slug });
   }
-
-  async findActiveAdmins(): Promise<User[]> {
-    return this.createQueryBuilder('u')
-      .where('u.roleCode = :role', { role: 'admin' })
-      .andWhere('u.isActive = true')
-      .orderBy('u.createdAt', 'DESC')
-      .getMany();
-  }
 }

@@ -5,7 +5,6 @@ export function createUsersServiceMock() {
     ...createMockService(),
     findBySlug: jest.fn(),
     validatePassword: jest.fn(),
-    findActiveAdmins: jest.fn(),
     findByEmail: jest.fn(),
     findByEmailWithPassword: jest.fn(),
   };

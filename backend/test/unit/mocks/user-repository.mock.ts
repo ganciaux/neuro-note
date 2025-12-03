@@ -5,7 +5,6 @@ export function createUsersRepositoryMock() {
     ...createMockRepository(),
     findByEmail: jest.fn(),
     findBySlug: jest.fn(),
-    findActiveAdmins: jest.fn(),
     findByEmailWithPassword: jest.fn(),
   };
 }

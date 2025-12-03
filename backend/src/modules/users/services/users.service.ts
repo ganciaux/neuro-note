@@ -51,11 +51,6 @@ export class UsersService extends BaseService<User, UserResponseDto, CreateUserD
     return toDto(UserResponseDto, user);
   }
 
-  async findActiveAdmins(): Promise<UserResponseDto[]> {
-    const admins = await this.userRepo.findActiveAdmins();
-    return toDtoArray(UserResponseDto, admins);
-  }
-
   async validatePassword(user: User, password: string): Promise<boolean> {
     if (!user.passwordHash) throw new Error('Password hash missing');
     return bcrypt.compare(password, user.passwordHash);

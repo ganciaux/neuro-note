@@ -108,20 +108,6 @@ describe('UsersService Unit Tests', () => {
     });
   });
 
-  describe('findActiveAdmins', () => {
-    it('should return admin list', async () => {
-      const admins = [UserFactory.makeEntity()];
-
-      (repositoryMock.findActiveAdmins as jest.Mock).mockResolvedValue(admins);
-
-      const result = await service.findActiveAdmins();
-
-      expect(result.length).toBe(1);
-      expect(repositoryMock.findActiveAdmins).toHaveBeenCalled();
-      expect(result).toEqual(toDtoArray(UserResponseDto, admins));
-    });
-  });
-
   describe('validatePassword', () => {
     it('should return true if password matches', async () => {
       const password = 'password';
@@ -139,7 +125,7 @@ describe('UsersService Unit Tests', () => {
     it('should return false if password mismatch', async () => {
       const password = 'password';
       const passwordHash = 'passwordHash';
-      const user = UserFactory.makeEntity({ passwordHash});
+      const user = UserFactory.makeEntity({ passwordHash });
 
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
@@ -166,7 +152,7 @@ describe('UsersService Unit Tests', () => {
   describe('findByEmailWithPassword', () => {
     it('should call repository', async () => {
       const passwordHash = 'passwordHash';
-      const user = UserFactory.makeEntity({ passwordHash});
+      const user = UserFactory.makeEntity({ passwordHash });
       (repositoryMock.findByEmailWithPassword as jest.Mock).mockResolvedValue(user);
 
       const result = await service.findByEmailWithPassword(user.email);
