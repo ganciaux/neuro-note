@@ -6,7 +6,7 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
 import { UsersRepository } from '../repositories/users.repository';
 import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
-import { toDto, toDtoArray } from '../../../common/utils/transform-to-dto';
+import { toDto } from '../../../common/utils/transform-to-dto';
 import { BaseService } from '../../../common/base/base.service';
 import { generateSlug } from '../../../common/utils/slug.util';
 

@@ -9,8 +9,6 @@ import { AddressesService } from '../../addresses/services/addresses.service';
 import { attachRelation } from '../../../common/utils/attach-relation.utils';
 import { BaseService } from '../../../common/base/base.service';
 import { generateSlug } from '../../../common/utils/slug.util';
-import { CatchTypeOrmError } from '../../../common/decorators/catch-typeorm-error.decorator';
-import { toDto } from '../../../common/utils/transform-to-dto';
 import { sanitize } from '../../../common/utils/sanitize.utils';
 
 @Injectable()
@@ -33,29 +31,9 @@ export class PatientsService extends BaseService<
     super(patientRepo);
   }
 
-  @CatchTypeOrmError()
-  async create(createPatientDto: CreatePatientDto): Promise<PatientResponseDto> {
-    const slug = generateSlug(createPatientDto.lastName);
-    const searchName = sanitize(`${createPatientDto.firstName}${createPatientDto.lastName}`);
-    const patient = this.patientRepo.create({
-      ...createPatientDto,
-      slug,
-      searchName,
-    });
-
-    const savedPatient = await this.patientRepo.save(patient);
-
-    return toDto(PatientResponseDto, savedPatient);
-  }
-
-  @CatchTypeOrmError()
-  async update(id: string, updatePatientDto: UpdatePatientDto): Promise<PatientResponseDto> {
-    const searchName = sanitize(`${updatePatientDto.firstName}${updatePatientDto.lastName}`);
-    const savedPatient = await this.patientRepo.save({
-      ...updatePatientDto,
-      searchName,
-    });
-    return toDto(PatientResponseDto, savedPatient);
+  private applyComputedFields(patient: Patient) {
+    patient.slug = generateSlug(patient.lastName);
+    patient.searchName = sanitize(`${patient.firstName}${patient.lastName}`);
   }
 
   protected async extendEntity(patient: Patient): Promise<Patient> {
@@ -64,5 +42,13 @@ export class PatientsService extends BaseService<
 
   protected async beforeDelete(patient: Patient): Promise<void> {
     await this.addressService.deleteByEntity('address_entity_patient', patient.id);
+  }
+
+  protected async beforeCreate(patient: Patient): Promise<void> {
+    this.applyComputedFields(patient);
+  }
+
+  protected async beforeUpdate(patient: Patient): Promise<void> {
+    this.applyComputedFields(patient);
   }
 }

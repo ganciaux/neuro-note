@@ -1,13 +1,13 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import slugify from 'slugify';
 import { UsersService } from '../../../src/modules/users/services/users.service';
 import { UsersRepository } from '../../../src/modules/users/repositories/users.repository';
 import { createServiceTestModule } from '../mocks/service-test-helper';
 import { UserFactory } from '../../../src/common/factories/user.factory';
 import { createUsersRepositoryMock } from '../mocks/user-repository.mock';
 import { UserResponseDto } from '../../../src/modules/users/dto/user-response.dto';
-import { toDto, toDtoArray } from '../../../src/common/utils/transform-to-dto';
+import { toDto } from '../../../src/common/utils/transform-to-dto';
+import { generateSlug } from '../../../src/common/utils/slug.util';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn(),
@@ -19,12 +19,11 @@ describe('UsersService Unit Tests', () => {
   let repositoryMock: any;
 
   beforeEach(async () => {
-    const customMock = createUsersRepositoryMock();
-    ({ service, repositoryMock } = await createServiceTestModule(
-      UsersService,
-      UsersRepository,
-      customMock,
-    ));
+    repositoryMock = createUsersRepositoryMock();
+
+    ({ service } = await createServiceTestModule(UsersService, [
+      { provide: UsersRepository, useValue: repositoryMock },
+    ]));
   });
 
   it('should be defined', () => {
@@ -38,7 +37,7 @@ describe('UsersService Unit Tests', () => {
       const id = 'generated-uuid-123';
       const passwordHash = 'passwordHash';
       const userName = 'createUser';
-      const slug = `${slugify(userName)}-abcd`;
+      const slug = generateSlug(userName);
       const dto = UserFactory.makeCreateDto({ userName });
       const entityForCreate = UserFactory.makeEntityForCreate({
         ...dto,
@@ -64,7 +63,7 @@ describe('UsersService Unit Tests', () => {
       expect(repositoryMock.create).toHaveBeenCalled();
       expect(repositoryMock.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          email: dto.email,
+          ...dto,
           passwordHash,
           slug,
         }),

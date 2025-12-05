@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -106,6 +107,7 @@ export abstract class BaseController<
     @Body() dto: UpdateDto,
   ): Promise<ResponseDto> {
     if (this.beforeUpdate) await this.beforeUpdate(dto);
+    await this.service.findOne(id);
     const result = await this.service.update(id, dto);
     if (this.afterUpdate) await this.afterUpdate(result as unknown as Entity);
     return result;

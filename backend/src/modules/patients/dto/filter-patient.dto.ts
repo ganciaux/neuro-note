@@ -23,7 +23,7 @@ export class FilterPatientDto extends FilterOptionsDto {
     rules: [IsString()],
   })
   @FilterEnum('patient_title')
-  titleCode: string;
+  titleCode?: string;
 
   @IsOptional()
   @ValidateNested()

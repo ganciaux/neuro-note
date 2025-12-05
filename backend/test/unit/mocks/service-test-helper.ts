@@ -1,27 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createMockRepository } from './repository.mock';
 
-export async function createServiceTestModule<TService, TRepository>(
+export async function createServiceTestModule<TService>(
   serviceClass: new (...args: any[]) => TService,
-  repositoryClass: new (...args: any[]) => TRepository,
-  customMock?: any,
+  providerMocks: Array<{ provide: any; useValue: any }> = [],
 ) {
-  const repositoryMock = customMock ?? createMockRepository();
+  const providers = [serviceClass, ...providerMocks];
 
-  const module: TestingModule = await Test.createTestingModule({
-    providers: [
-      serviceClass,
-      {
-        provide: repositoryClass,
-        useValue: repositoryMock,
-      },
-    ],
-  }).compile();
+  const module: TestingModule = await Test.createTestingModule({ providers }).compile();
 
   return {
     module,
     service: module.get<TService>(serviceClass),
-    repository: module.get<TRepository>(repositoryClass),
-    repositoryMock,
+    providerMocks,
   };
 }
