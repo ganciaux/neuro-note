@@ -4,7 +4,8 @@ import { AppDataSource } from '../src/data-source';
 import { Patient } from '../src/modules/patients/entities/patient.entity';
 import { User } from '../src/modules/users/entities/user.entity';
 import { Address } from '../src/modules/addresses/entities/address.entity';
-import { Service, Services } from '../src/modules/services/entities/service.entity';
+import { Service, ServiceItem } from '../src/modules/services/entities/service.entity';
+import { ServiceFactory } from '../src/common/factories/service.factory';
 
 async function seedFakeData() {
   await AppDataSource.initialize();
@@ -20,12 +21,14 @@ async function seedFakeData() {
   await addressRepo.clear();
   await userRepo.clear();
   await patientRepo.clear();
+  await AppDataSource.getRepository(Service).query(`TRUNCATE TABLE "services" CASCADE;`);
 
-  console.log('🗑️ delete addresses, users and patients');
+  console.log('🗑️ delete addresses, users, services and patients');
 
   const patients: Patient[] = [];
   const users: User[] = [];
   const addresses: Address[] = [];
+  const services: Service[] = [];
 
   // ======================
   // PATIENTS
@@ -122,9 +125,40 @@ async function seedFakeData() {
 
   await addressRepo.save(addresses);
 
+  // ======================
+  // SERVICES & SERVICE ITEMS
+  // ======================
+  const TOTAL_SERVICES = 20;
+  const MAX_ITEMS_PER_BUNDLE = 5;
+
+  for (let i = 0; i < TOTAL_SERVICES; i++) {
+    const itemsCount = faker.datatype.boolean()
+      ? faker.number.int({ min: 1, max: MAX_ITEMS_PER_BUNDLE })
+      : 0;
+
+    const service = ServiceFactory.makeEntity(undefined, itemsCount);
+
+    if (service.isBundle && service.items) {
+      for (let j = 0; j < service.items.length; j++) {
+        const linkedService = ServiceFactory.makeEntity();
+        services.push(linkedService);
+
+        service.items[j].service = linkedService;
+        service.items[j].serviceId = linkedService.id;
+        service.items[j].bundle = service;
+        service.items[j].bundleId = service.id;
+      }
+    }
+
+    services.push(service);
+  }
+
+  await serviceRepo.save(services);
+
   console.log(`✅ ${savedPatients.length} patients saved`);
   console.log(`✅ ${savedUsers.length} users saved`);
   console.log(`✅ ${addresses.length} adresses saved`);
+  console.log(`✅ ${services.length} services (et items) saved`);
 
   await AppDataSource.destroy();
 }

@@ -23,8 +23,8 @@ export class PatientsController extends BaseController<
     PermissionActions,
     (user: JwtUser, request?: any) => boolean
   > = {
-    create: (user: JwtUser) => false,
-    findAll: (user: JwtUser) => false,
+    create: (user: JwtUser) => true,
+    findAll: (user: JwtUser) => true,
     count: (user: JwtUser) => false,
     findDeleted: (user: JwtUser) => false,
     search: (user: JwtUser) => false,

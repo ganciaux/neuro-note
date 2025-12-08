@@ -3,7 +3,7 @@ import { User } from '../../modules/users/entities/user.entity';
 import { CreateUserDto } from '../../modules/users/dto/create-user.dto';
 import { UpdateUserDto } from '../../modules/users/dto/update-user.dto';
 import { UserResponseDto } from '../../modules/users/dto/user-response.dto';
-import { generateSlug } from '../../common/utils/slug.util';
+import { generateSlug } from '../utils/slug.util';
 import { USER_ROLES } from './enum-values';
 
 export const UserFactory = {

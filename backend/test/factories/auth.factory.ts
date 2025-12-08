@@ -3,7 +3,7 @@ import { UserFactory } from '../../src/common/factories/user.factory';
 import { USER_ROLES } from '../../src/common/factories/enum-values';
 import { AuthFactoryResult } from '../../test/types/auth-factory.types';
 import { UsersService } from '../../src/modules/users/services/users.service';
-import { RegisterDto } from 'src/modules/auth/dto/register.dto';
+import { RegisterDto } from '../../src/modules/auth/dto/register.dto';
 import { faker } from '@faker-js/faker';
 
 export class AuthFactory {

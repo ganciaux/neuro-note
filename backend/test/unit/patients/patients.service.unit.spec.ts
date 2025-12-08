@@ -2,7 +2,7 @@ import { PatientsService } from '../../../src/modules/patients/services/patients
 import { createPatientsRepositoryMock } from '../mocks/patient-repository.mock';
 import { createAddressesRepositoryMock } from '../mocks/address-repository.mock';
 import { PatientsRepository } from '../../../src/modules/patients/repositories/patients.repository';
-import { AddressesRepository } from 'src/modules/addresses/repositories/addresses.repository';
+import { AddressesRepository } from '../../../src/modules/addresses/repositories/addresses.repository';
 import { PatientFactory } from '../../../src/common/factories/patient.factory';
 import { toDto } from '../../../src/common/utils/transform-to-dto';
 import { PatientResponseDto } from '../../../src/modules/patients/dto/patient-response.dto';

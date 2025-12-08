@@ -2,7 +2,7 @@ import { FilterPatientDto } from '../../../src/modules/patients/dto/filter-patie
 import { PatientsController } from '../../../src/modules/patients/controllers/patients.controller';
 import { PatientsService } from '../../../src/modules/patients/services/patients.service';
 import { createPatientsServiceMock } from '../mocks/patient-service.mock';
-import { PatientFactory } from 'src/common/factories/patient.factory';
+import { PatientFactory } from '../../../src/common/factories/patient.factory';
 
 describe('PatientsController', () => {
   let controller: PatientsController;

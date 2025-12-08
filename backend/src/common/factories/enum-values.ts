@@ -24,3 +24,8 @@ export const ADDRESS_COUNTRY = {
   FR: 'address_country_fr',
   BE: 'address_country_be',
 } as const;
+
+export const SERVICE_CATEGORY = {
+  CONSULT: 'service_category_consult',
+  BILAN: 'service_category_bilan',
+} as const;

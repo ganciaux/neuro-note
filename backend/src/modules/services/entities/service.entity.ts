@@ -1,4 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('services')
 export class Service {
@@ -35,7 +44,7 @@ export class Service {
   @Column({ name: 'updated_at', type: 'timestamp', default: () => 'now()' })
   updatedAt: Date;
 
-  @DeleteDateColumm({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date | null;
 
   @OneToMany(() => ServiceItem, (item) => item.bundle)
@@ -47,7 +56,7 @@ export class Service {
 
 @Entity('service_items')
 export class ServiceItem {
-  @PrimaryColumm({ name: 'bundle_id', type: 'uuid' })
+  @PrimaryColumn({ name: 'bundle_id', type: 'uuid' })
   bundleId: string;
 
   @PrimaryColumn({ name: 'service_id', type: 'uuid' })
