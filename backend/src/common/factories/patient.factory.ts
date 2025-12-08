@@ -92,13 +92,11 @@ export const PatientFactory = {
   ): Omit<Patient, 'id' | 'createdAt' | 'updatedAt'> => {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
-    const userName = faker.internet.username();
 
     const base = {
       email: makeFakeEmail(firstName, lastName),
       firstName,
       lastName,
-      userName,
       titleCode: faker.helpers.arrayElement(Object.values(PATIENT_TITLES)),
       searchName: sanitize(`${firstName}${lastName}`),
       slug: generatePatientSlug({ firstName, lastName }),
