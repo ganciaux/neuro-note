@@ -1,29 +1,31 @@
 import { faker } from '@faker-js/faker';
+import bcrypt from 'bcryptjs';
 import { User } from '../../modules/users/entities/user.entity';
 import { CreateUserDto } from '../../modules/users/dto/create-user.dto';
 import { UpdateUserDto } from '../../modules/users/dto/update-user.dto';
 import { UserResponseDto } from '../../modules/users/dto/user-response.dto';
-import { generateSlug } from '../utils/slug.util';
+import { generateUserSlug } from '../utils/slug.util';
 import { USER_ROLES } from './enum-values';
+import { makeFakeEmail } from './email.factory';
 
 export const UserFactory = {
   makeEntity: (overrides?: Partial<User>): User => {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const userName = faker.internet.username();
+    const password = faker.internet.password();
+    const passwordHash: string = bcrypt.hashSync(password, 10);
 
     const base: User = {
       id: faker.string.uuid(),
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      email: makeFakeEmail(firstName, lastName),
       firstName,
       lastName,
       userName,
-      roleCode: USER_ROLES.ADMIN,
+      roleCode: faker.helpers.arrayElement(Object.values(USER_ROLES)),
       role: undefined,
-      slug: generateSlug(`${firstName}-${lastName}`),
-
-      passwordHash: '$2b$10$abcdefghijklmnopqrstuv12345678901234567890123456789',
-
+      slug: generateUserSlug({ firstName, lastName }),
+      passwordHash,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: undefined,
@@ -32,10 +34,10 @@ export const UserFactory = {
     return { ...base, ...overrides };
   },
 
-  makeEntityWithoutPassword: (overrides?: Partial<User>): User => {
+  makeEntityWithoutPassword: (overrides?: Partial<User>): Omit<User, 'passwordHash'> => {
     const user = UserFactory.makeEntity(overrides);
-    delete user.passwordHash;
-    return user;
+    const { passwordHash, ...rest } = user;
+    return rest;
   },
 
   makeEntityForCreate: (
@@ -44,16 +46,18 @@ export const UserFactory = {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const userName = faker.internet.username();
+    const password = faker.internet.password();
+    const passwordHash: string = bcrypt.hashSync(password, 10);
 
     const base = {
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      email: makeFakeEmail(firstName, lastName),
       firstName,
       lastName,
       userName,
-      roleCode: USER_ROLES.ADMIN,
+      roleCode: faker.helpers.arrayElement(Object.values(USER_ROLES)),
       role: undefined,
-      slug: generateSlug(`${firstName}-${lastName}`),
-      passwordHash: '$2b$10$abcdefghijklmnopqrstuv12345678901234567890123456789',
+      slug: generateUserSlug({ firstName, lastName }),
+      passwordHash,
       deletedAt: undefined,
     };
 
@@ -65,12 +69,12 @@ export const UserFactory = {
     const lastName = faker.person.lastName();
 
     const base: CreateUserDto = {
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      email: makeFakeEmail(firstName, lastName),
       firstName,
       lastName,
-      password: '12345678',
+      password: faker.internet.password(),
       userName: faker.internet.username().toLowerCase(),
-      roleCode: USER_ROLES.ADMIN,
+      roleCode: faker.helpers.arrayElement(Object.values(USER_ROLES)),
     };
 
     return { ...base, ...overrides };
@@ -81,7 +85,7 @@ export const UserFactory = {
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
       userName: faker.internet.username().toLowerCase(),
-      roleCode: USER_ROLES.ADMIN,
+      roleCode: faker.helpers.arrayElement(Object.values(USER_ROLES)),
       //email
     };
 
@@ -94,12 +98,12 @@ export const UserFactory = {
 
     const base: UserResponseDto = {
       id: faker.string.uuid(),
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      email: makeFakeEmail(firstName, lastName),
       firstName,
       lastName,
       userName: faker.internet.username().toLowerCase(),
-      roleCode: USER_ROLES.ADMIN,
-      slug: generateSlug(`${firstName}-${lastName}`),
+      roleCode: faker.helpers.arrayElement(Object.values(USER_ROLES)),
+      slug: generateUserSlug({ firstName, lastName }),
       createdAt: new Date(),
       updatedAt: new Date(),
     };

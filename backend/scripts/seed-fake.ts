@@ -1,11 +1,16 @@
 import { faker } from '@faker-js/faker';
-import bcrypt from 'bcrypt';
 import { AppDataSource } from '../src/data-source';
 import { Patient } from '../src/modules/patients/entities/patient.entity';
 import { User } from '../src/modules/users/entities/user.entity';
 import { Address } from '../src/modules/addresses/entities/address.entity';
-import { Service, ServiceItem } from '../src/modules/services/entities/service.entity';
+import { Service } from '../src/modules/services/entities/service.entity';
 import { ServiceFactory } from '../src/common/factories/service.factory';
+import { UserFactory } from '../src/common/factories/user.factory';
+import { PatientFactory } from '../src/common/factories/patient.factory';
+import { AddressFactory } from '../src/common/factories/address.factory';
+import { ADDRESS_ENTITY } from '../src/common/factories/enum-values';
+import { generatePatientSlug } from '../src/common/utils/slug.util';
+import { sanitize } from '../src/common/utils/sanitize.utils';
 
 async function seedFakeData() {
   await AppDataSource.initialize();
@@ -21,9 +26,16 @@ async function seedFakeData() {
   await addressRepo.clear();
   await userRepo.clear();
   await patientRepo.clear();
-  await AppDataSource.getRepository(Service).query(`TRUNCATE TABLE "services" CASCADE;`);
+  await serviceRepo.query(`TRUNCATE TABLE "services" CASCADE;`);
 
   console.log('🗑️ delete addresses, users, services and patients');
+
+  const MAX_USER = 5;
+  const MAX_PATIENT = 20;
+  const MAX_ADDRESSES_PATIENT = 5;
+  const MAX_ADDRESSES_USER = 5;
+  const MAX_SERVICES = 20;
+  const MAX_SERVICE_ITEMS_BUNDLE = 5;
 
   const patients: Patient[] = [];
   const users: User[] = [];
@@ -33,23 +45,8 @@ async function seedFakeData() {
   // ======================
   // PATIENTS
   // ======================
-  for (let i = 0; i < 50; i++) {
-    const firstName = faker.person.firstName();
-    const lastName = faker.person.lastName();
-    const email = faker.internet.email({ firstName, lastName });
-
-    const patient = patientRepo.create({
-      firstName,
-      lastName,
-      titleCode: faker.helpers.arrayElement([
-        'patient_title_mr',
-        'patient_title_mrs',
-        'patient_title_ms',
-      ]),
-      birthDate: faker.date.birthdate({ min: 1950, max: 2024, mode: 'year' }),
-      phone: faker.phone.number({ style: 'international' }),
-      email,
-    });
+  for (let i = 0; i < MAX_PATIENT; i++) {
+    const patient = patientRepo.create(PatientFactory.makeEntity());
     patients.push(patient);
   }
 
@@ -57,22 +54,14 @@ async function seedFakeData() {
 
   // ADDRESSES
   for (const patient of savedPatients) {
-    const count = faker.number.int({ min: 0, max: 3 });
+    const count = faker.number.int({ min: 0, max: MAX_ADDRESSES_PATIENT });
     for (let j = 0; j < count; j++) {
-      const address = addressRepo.create({
-        entityType: 'address_entity_patient',
-        entityId: patient.id,
-        typeCode: faker.helpers.arrayElement(['address_type_home', 'address_type_work']),
-        street: faker.location.streetAddress(),
-        postalCode: faker.location.zipCode(),
-        city: faker.location.city(),
-        countryCode: faker.helpers.arrayElement([
-          'address_country_lu',
-          'address_country_fr',
-          'address_country_be',
-        ]),
-        label: faker.lorem.words(2),
-      });
+      const address = addressRepo.create(
+        AddressFactory.makeEntity({
+          entityType: ADDRESS_ENTITY.PATIENT,
+          entityId: patient.id,
+        }),
+      );
       addresses.push(address);
     }
   }
@@ -80,22 +69,8 @@ async function seedFakeData() {
   // ======================
   // USERS
   // ======================
-  const roles = ['user_role_admin', 'user_role_staff'];
-  const hashedPassword = await bcrypt.hash('12345678', 10);
-
-  for (let i = 0; i < 5; i++) {
-    const firstName = faker.person.firstName();
-    const lastName = faker.person.lastName();
-    const email = faker.internet.email({ firstName, lastName });
-
-    const user = userRepo.create({
-      email,
-      passwordHash: hashedPassword,
-      firstName: `${firstName}`,
-      lastName: `${lastName}`,
-      userName: faker.internet.username(),
-      roleCode: faker.helpers.arrayElement(roles),
-    });
+  for (let i = 0; i < MAX_USER; i++) {
+    const user = userRepo.create(UserFactory.makeEntityForCreate());
     users.push(user);
   }
 
@@ -103,22 +78,14 @@ async function seedFakeData() {
 
   // ADDRESSES
   for (const user of savedUsers) {
-    const count = faker.number.int({ min: 0, max: 3 });
+    const count = faker.number.int({ min: 0, max: MAX_ADDRESSES_USER });
     for (let j = 0; j < count; j++) {
-      const address = addressRepo.create({
-        entityType: 'address_entity_user',
-        entityId: user.id,
-        typeCode: faker.helpers.arrayElement(['address_type_home', 'address_type_work']),
-        street: faker.location.streetAddress(),
-        postalCode: faker.location.zipCode(),
-        city: faker.location.city(),
-        countryCode: faker.helpers.arrayElement([
-          'address_country_lu',
-          'address_country_fr',
-          'address_country_be',
-        ]),
-        label: faker.lorem.words(2),
-      });
+      const address = addressRepo.create(
+        AddressFactory.makeEntity({
+          entityType: ADDRESS_ENTITY.USER,
+          entityId: user.id,
+        }),
+      );
       addresses.push(address);
     }
   }
@@ -128,12 +95,9 @@ async function seedFakeData() {
   // ======================
   // SERVICES & SERVICE ITEMS
   // ======================
-  const TOTAL_SERVICES = 20;
-  const MAX_ITEMS_PER_BUNDLE = 5;
-
-  for (let i = 0; i < TOTAL_SERVICES; i++) {
+  for (let i = 0; i < MAX_SERVICES; i++) {
     const itemsCount = faker.datatype.boolean()
-      ? faker.number.int({ min: 1, max: MAX_ITEMS_PER_BUNDLE })
+      ? faker.number.int({ min: 1, max: MAX_SERVICE_ITEMS_BUNDLE })
       : 0;
 
     const service = ServiceFactory.makeEntity(undefined, itemsCount);
@@ -158,7 +122,7 @@ async function seedFakeData() {
   console.log(`✅ ${savedPatients.length} patients saved`);
   console.log(`✅ ${savedUsers.length} users saved`);
   console.log(`✅ ${addresses.length} adresses saved`);
-  console.log(`✅ ${services.length} services (et items) saved`);
+  console.log(`✅ ${services.length} services (and items) saved`);
 
   await AppDataSource.destroy();
 }

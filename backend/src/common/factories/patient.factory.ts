@@ -6,7 +6,8 @@ import { sanitize } from '../../common/utils/sanitize.utils';
 import { CreatePatientDto } from '../../modules/patients/dto/create-patient.dto';
 import { UpdatePatientDto } from '../../modules/patients/dto/update-patient.dto';
 import { PatientResponseDto } from '../../modules/patients/dto/patient-response.dto';
-import { generateSlug } from '../utils/slug.util';
+import { generatePatientSlug } from '../utils/slug.util';
+import { makeFakeEmail } from './email.factory';
 
 export const PatientFactory = {
   makeEntity: (overrides?: Partial<Patient>, withAddresses = true): Patient => {
@@ -15,17 +16,17 @@ export const PatientFactory = {
 
     const base = new Patient();
     base.id = faker.string.uuid();
-    base.titleCode = PATIENT_TITLES.MR;
+    base.titleCode = faker.helpers.arrayElement(Object.values(PATIENT_TITLES));
     base.firstName = firstName;
     base.lastName = lastName;
     base.searchName = sanitize(`${firstName}${lastName}`);
     base.birthDate = faker.date.birthdate({ min: 18, max: 90, mode: 'age' });
     base.phone = faker.phone.number();
-    base.email = `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`;
+    base.email = makeFakeEmail(firstName, lastName);
     base.createdAt = new Date();
     base.updatedAt = new Date();
     base.deletedAt = undefined;
-    base.slug = generateSlug(`${firstName}-${lastName}`);
+    base.slug = generatePatientSlug({ firstName, lastName });
     base.addresses = withAddresses ? [AddressFactory.makeEntity({ entityId: base.id })] : [];
 
     if (overrides) {
@@ -40,12 +41,12 @@ export const PatientFactory = {
     const lastName = faker.person.lastName();
 
     const base: CreatePatientDto = {
-      titleCode: PATIENT_TITLES.MR,
+      titleCode: faker.helpers.arrayElement(Object.values(PATIENT_TITLES)),
       firstName,
       lastName,
-      birthDate: faker.date.birthdate({ min: 18, max: 90, mode: 'age' }),
+      birthDate: faker.date.birthdate({ min: 4, max: 90, mode: 'age' }),
       phone: faker.phone.number(),
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      email: makeFakeEmail(firstName, lastName),
     };
 
     return { ...base, ...overrides };
@@ -59,7 +60,7 @@ export const PatientFactory = {
       firstName,
       lastName,
       phone: faker.phone.number(),
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      email: makeFakeEmail(firstName, lastName),
     };
 
     return { ...base, ...overrides };
@@ -71,13 +72,13 @@ export const PatientFactory = {
 
     const base: PatientResponseDto = {
       id: faker.string.uuid(),
-      titleCode: PATIENT_TITLES.MR,
+      titleCode: faker.helpers.arrayElement(Object.values(PATIENT_TITLES)),
       firstName,
       lastName,
       birthDate: faker.date.birthdate({ min: 18, max: 90, mode: 'age' }),
       phone: faker.phone.number(),
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
-      slug: generateSlug(`${firstName}-${lastName}`),
+      email: makeFakeEmail(firstName, lastName),
+      slug: generatePatientSlug({ firstName, lastName }),
       createdAt: new Date(),
       updatedAt: new Date(),
       addresses: [],
@@ -94,13 +95,13 @@ export const PatientFactory = {
     const userName = faker.internet.username();
 
     const base = {
-      email: `${faker.string.uuid()}_${faker.internet.email().toLowerCase()}`,
+      email: makeFakeEmail(firstName, lastName),
       firstName,
       lastName,
       userName,
-      titleCode: PATIENT_TITLES.MR,
+      titleCode: faker.helpers.arrayElement(Object.values(PATIENT_TITLES)),
       searchName: sanitize(`${firstName}${lastName}`),
-      slug: generateSlug(`${firstName}-${lastName}`),
+      slug: generatePatientSlug({ firstName, lastName }),
       birthDate: faker.date.birthdate({ min: 18, max: 90, mode: 'age' }),
       phone: faker.phone.number(),
       deletedAt: undefined,

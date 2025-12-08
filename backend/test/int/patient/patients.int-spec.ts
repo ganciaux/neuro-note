@@ -7,8 +7,6 @@ import { PatientsService } from '../../../src/modules/patients/services/patients
 import { PatientsRepository } from '../../../src/modules/patients/repositories/patients.repository';
 import { PatientFactory } from '../../../src/common/factories/patient.factory';
 import { PatientResponseDto } from '../../../src/modules/patients/dto/patient-response.dto';
-import { generateSlug } from '../../../src/common/utils/slug.util';
-import { sanitize } from '../../../src/common/utils/sanitize.utils';
 
 describe('Patients Integration Test', () => {
   let patientsRepository: PatientsRepository;
