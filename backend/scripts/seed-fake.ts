@@ -4,6 +4,7 @@ import { AppDataSource } from '../src/data-source';
 import { Patient } from '../src/modules/patients/entities/patient.entity';
 import { User } from '../src/modules/users/entities/user.entity';
 import { Address } from '../src/modules/addresses/entities/address.entity';
+import { Service, Services } from '../src/modules/services/entities/service.entity';
 
 async function seedFakeData() {
   await AppDataSource.initialize();
@@ -11,6 +12,7 @@ async function seedFakeData() {
   const patientRepo = AppDataSource.getRepository(Patient);
   const userRepo = AppDataSource.getRepository(User);
   const addressRepo = AppDataSource.getRepository(Address);
+  const serviceRepo = AppDataSource.getRepository(Service);
 
   // ======================
   // Clean

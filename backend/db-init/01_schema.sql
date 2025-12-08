@@ -76,3 +76,28 @@ CREATE TABLE addresses (
 );
 
 CREATE INDEX idx_addresses_entity ON addresses(entity_type, entity_id);
+
+-- ============================================
+-- SERVICES & BUNDLES
+-- ============================================
+CREATE TABLE services (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code VARCHAR(255)NOT NULL,
+  slug VARCHAR(64) UNIQUE NOT NULL,
+  label_internal VARCHAR(255)NOT NULL,
+  label_invoice VARCHAR(255)NOT NULL,
+  category_code VARCHAR(128) REFERENCES enum_types(code),
+  price NUMERIC(10,2) DEFAULT 0 CHECK (price >= 0),
+  is_bundle BOOLEAN DEFAULT FALSE,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now(),
+  deleted_at TIMESTAMP
+);
+
+CREATE TABLE service_items (
+  bundle_id UUID NOT NULL REFERENCES services(id) ON DELETE CASCADE,
+  service_id UUID NOT NULL REFERENCES services(id),
+  quantity INT DEFAULT 1,
+  PRIMARY KEY (bundle_id, service_id)
+);

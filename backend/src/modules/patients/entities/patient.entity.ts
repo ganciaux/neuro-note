@@ -36,7 +36,7 @@ export class Patient {
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date | null;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 64 })
   slug: string;
 
   addresses?: Address[];

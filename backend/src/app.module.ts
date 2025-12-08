@@ -9,6 +9,7 @@ import { AddressesModule } from './modules/addresses/addresses.module';
 import { CommonModule } from './common/common.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { ServicesModule } from './modules/services/services.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AppController } from './app.controller';
     PatientsModule,
     AddressesModule,
     CommonModule,
+    ServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
