@@ -48,6 +48,7 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
 
   async findOne(id: string | number): Promise<ResponseDto> {
     const entity = await this.findRaw(id);
+    console.log('Found entity:', entity);
     return toDto(this.responseDtoClass, entity);
   }
 

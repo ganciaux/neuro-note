@@ -90,6 +90,7 @@ CREATE TABLE services (
   price NUMERIC(10,2) DEFAULT 0 CHECK (price >= 0),
   is_bundle BOOLEAN DEFAULT FALSE,
   is_active BOOLEAN DEFAULT TRUE,
+  item_count INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT now(),
   updated_at TIMESTAMP DEFAULT now(),
   deleted_at TIMESTAMP

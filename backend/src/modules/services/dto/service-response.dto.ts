@@ -1,11 +1,16 @@
 import { Expose, Type } from 'class-transformer';
 
-export class ServiceItemResponseDto {
-  @Expose()
-  serviceId: string;
+export class ServiceLightDto {
+  @Expose() id: string;
+  @Expose() code: string;
+  @Expose() labelInternal: string;
+  @Expose() slug: string;
+}
 
-  @Expose()
-  quantity: number;
+export class ServiceItemResponseDto {
+  @Expose() serviceId: string;
+  @Expose() quantity: number;
+  @Expose() @Type(() => ServiceLightDto) service: ServiceLightDto;
 }
 
 export class ServiceResponseDto {
@@ -45,4 +50,13 @@ export class ServiceResponseDto {
   @Expose()
   @Type(() => ServiceItemResponseDto)
   items?: ServiceItemResponseDto[];
+
+  @Expose()
+  @Type(() => ServiceItemResponseDto)
+  parentBundles?: ServiceItemResponseDto[];
+
+  @Expose()
+  get itemCount(): number {
+    return this.items?.length ?? 0;
+  }
 }

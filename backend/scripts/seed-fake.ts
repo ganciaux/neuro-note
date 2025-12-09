@@ -9,8 +9,6 @@ import { UserFactory } from '../src/common/factories/user.factory';
 import { PatientFactory } from '../src/common/factories/patient.factory';
 import { AddressFactory } from '../src/common/factories/address.factory';
 import { ADDRESS_ENTITY } from '../src/common/factories/enum-values';
-import { generatePatientSlug } from '../src/common/utils/slug.util';
-import { sanitize } from '../src/common/utils/sanitize.utils';
 
 async function seedFakeData() {
   await AppDataSource.initialize();
