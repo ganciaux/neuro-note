@@ -8,6 +8,7 @@ import { UpdatePatientDto } from '../../modules/patients/dto/update-patient.dto'
 import { PatientResponseDto } from '../../modules/patients/dto/patient-response.dto';
 import { generatePatientSlug } from '../utils/slug.util';
 import { makeFakeEmail } from './email.factory';
+import { fakerDateOnly } from '../utils/date.utils';
 
 export const PatientFactory = {
   makeEntity: (overrides?: Partial<Patient>, withAddresses = true): Patient => {
@@ -20,7 +21,7 @@ export const PatientFactory = {
     base.firstName = firstName;
     base.lastName = lastName;
     base.searchName = sanitize(`${firstName}${lastName}`);
-    base.birthDate = faker.date.birthdate({ min: 18, max: 90, mode: 'age' });
+    base.birthDate = fakerDateOnly({ min: 18, max: 90, mode: 'age' });
     base.phone = faker.phone.number();
     base.email = makeFakeEmail(firstName, lastName);
     base.createdAt = new Date();
@@ -44,7 +45,7 @@ export const PatientFactory = {
       titleCode: faker.helpers.arrayElement(Object.values(PATIENT_TITLES)),
       firstName,
       lastName,
-      birthDate: faker.date.birthdate({ min: 4, max: 90, mode: 'age' }),
+      birthDate: fakerDateOnly({ min: 18, max: 90, mode: 'age' }),
       phone: faker.phone.number(),
       email: makeFakeEmail(firstName, lastName),
     };
@@ -75,7 +76,7 @@ export const PatientFactory = {
       titleCode: faker.helpers.arrayElement(Object.values(PATIENT_TITLES)),
       firstName,
       lastName,
-      birthDate: faker.date.birthdate({ min: 18, max: 90, mode: 'age' }),
+      birthDate: fakerDateOnly({ min: 18, max: 90, mode: 'age' }),
       phone: faker.phone.number(),
       email: makeFakeEmail(firstName, lastName),
       slug: generatePatientSlug({ firstName, lastName }),
@@ -100,7 +101,7 @@ export const PatientFactory = {
       titleCode: faker.helpers.arrayElement(Object.values(PATIENT_TITLES)),
       searchName: sanitize(`${firstName}${lastName}`),
       slug: generatePatientSlug({ firstName, lastName }),
-      birthDate: faker.date.birthdate({ min: 18, max: 90, mode: 'age' }),
+      birthDate: fakerDateOnly({ min: 18, max: 90, mode: 'age' }),
       phone: faker.phone.number(),
       deletedAt: undefined,
     };

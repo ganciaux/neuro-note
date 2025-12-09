@@ -1,5 +1,6 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { AddressResponseDto } from '../../addresses/dto/address-response.dto';
+import { formatDateOnly } from '../../../common/utils/date.utils';
 
 export class PatientResponseDto {
   @Expose()
@@ -18,6 +19,7 @@ export class PatientResponseDto {
   lastName: string;
 
   @Expose()
+  @Transform(({ value }) => formatDateOnly(value))
   birthDate: Date;
 
   @Expose()

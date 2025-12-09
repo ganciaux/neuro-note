@@ -1,4 +1,3 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
 import { CommonModule } from '../../../src/common/common.module';
 import { setupIntegration } from '../setup-helper';
 import { toDto } from '../../../src/common/utils/transform-to-dto';
@@ -7,6 +6,7 @@ import { PatientsService } from '../../../src/modules/patients/services/patients
 import { PatientsRepository } from '../../../src/modules/patients/repositories/patients.repository';
 import { PatientFactory } from '../../../src/common/factories/patient.factory';
 import { PatientResponseDto } from '../../../src/modules/patients/dto/patient-response.dto';
+import { formatDateOnly } from '../../../src/common/utils/date.utils';
 
 describe('Patients Integration Test', () => {
   let patientsRepository: PatientsRepository;
@@ -29,7 +29,7 @@ describe('Patients Integration Test', () => {
 
   it('should create a patient', async () => {
     const dto = PatientFactory.makeCreateDto();
-    const dtoBefore = { ...dto };
+    const dtoBefore = { ...dto, birthDate: formatDateOnly(dto.birthDate) };
     const created = await patientsService.create(dto);
 
     expect(created.id).toBeDefined();

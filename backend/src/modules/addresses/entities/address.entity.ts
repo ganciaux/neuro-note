@@ -29,12 +29,12 @@ export class Address {
   @Column({ name: 'label', length: 256 })
   label: string;
 
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'now()' })
+  @Column({ name: 'created_at', type: 'timestamptz', default: () => 'now()' })
   createdAt: Date;
 
-  @Column({ name: 'updated_at', type: 'timestamp', default: () => 'now()' })
+  @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'now()' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
   deletedAt?: Date | null;
 }
