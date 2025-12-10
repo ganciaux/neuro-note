@@ -49,8 +49,9 @@ export abstract class BaseController<
 
   @Get()
   @UsePermission('findAll')
-  findAll(): Promise<ResponseDto[]> {
-    return this.service.findAll();
+  findAll(@Query('include') include?: string): Promise<ResponseDto[]> {
+    const includeRelations = include ? include.split(',') : [];
+    return this.service.findAll(includeRelations);
   }
 
   @Get('count')
@@ -95,8 +96,12 @@ export abstract class BaseController<
 
   @Get(':id')
   @UsePermission('findOne')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<ResponseDto> {
-    return this.service.findOne(id);
+  findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Query('include') include?: string,
+  ): Promise<ResponseDto> {
+    const includeRelations = include ? include.split(',') : [];
+    return this.service.findOne(id, includeRelations);
   }
 
   @Patch(':id')

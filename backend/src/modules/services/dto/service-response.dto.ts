@@ -56,7 +56,5 @@ export class ServiceResponseDto {
   parentBundles?: ServiceItemResponseDto[];
 
   @Expose()
-  get itemCount(): number {
-    return this.items?.length ?? 0;
-  }
+  itemCount?: number;
 }

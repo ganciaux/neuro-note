@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
   Column,
   DeleteDateColumn,
@@ -52,6 +53,11 @@ export class Service {
 
   @OneToMany(() => ServiceItem, (item) => item.service)
   parentBundles?: ServiceItem[];
+
+  @Expose()
+  get itemCount(): number | undefined {
+    return this.items?.length;
+  }
 }
 
 @Entity('service_items')

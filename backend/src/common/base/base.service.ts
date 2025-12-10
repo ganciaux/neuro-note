@@ -10,6 +10,7 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
   protected abstract readonly idKey: keyof Entity;
   protected abstract readonly entityLabel: string;
   protected abstract alias: string;
+  protected abstract relations: string[];
 
   constructor(protected readonly repository: Repository<Entity>) {}
 
@@ -41,26 +42,41 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
     return Promise.resolve(entity);
   }
 
-  async findAll(): Promise<ResponseDto[]> {
-    const entities = await this.repository.find();
+  async findAll(includeRelations: string[] = []): Promise<ResponseDto[]> {
+    const qb = this.repository.createQueryBuilder(this.alias);
+
+    includeRelations
+      .filter((r) => this.relations.includes(r))
+      .forEach((relation) => qb.leftJoinAndSelect(`${this.alias}.${relation}`, relation));
+
+    const entities = await qb.getMany();
     return toDtoArray(this.responseDtoClass, entities);
   }
 
-  async findOne(id: string | number): Promise<ResponseDto> {
-    const entity = await this.findRaw(id);
-    console.log('Found entity:', entity);
+  async findOne(id: string | number, includeRelations: string[] = []): Promise<ResponseDto> {
+    const entity = await this.findRaw(id, includeRelations);
     return toDto(this.responseDtoClass, entity);
   }
 
-  async findOneExtended(id: string | number): Promise<ResponseDto> {
-    const entity: Entity = await this.findRaw(id);
+  async findOneExtended(
+    id: string | number,
+    includeRelations: string[] = [],
+  ): Promise<ResponseDto> {
+    const entity = await this.findRaw(id, includeRelations);
     const extended: Entity = await this.extendEntity(entity);
     return toDto(this.responseDtoClass, extended);
   }
 
-  protected async findRaw(id: string | number): Promise<Entity> {
-    const where = { [this.idKey]: id } as FindOptionsWhere<Entity>;
-    const entity = await this.repository.findOne({ where });
+  protected async findRaw(id: string | number, includeRelations: string[] = []): Promise<Entity> {
+    const qb = this.repository
+      .createQueryBuilder(this.alias)
+      .where(`${this.alias}.${this.idKey} = :id`, { id });
+
+    includeRelations
+      .filter((r) => this.relations.includes(r))
+      .forEach((relation) => qb.leftJoinAndSelect(`${this.alias}.${relation}`, relation));
+
+    const entity = await qb.getOne();
     if (!entity) throw new NotFoundException(`${this.entityLabel} #${id} not found`);
     return entity;
   }

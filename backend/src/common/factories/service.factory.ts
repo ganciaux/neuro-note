@@ -64,8 +64,10 @@ export const ServiceFactory = {
   },
 
   makeResponseDto: (overrides?: Partial<ServiceResponseDto>): ServiceResponseDto => {
+    const base = new ServiceResponseDto();
     const code = faker.commerce.productName();
-    const base: ServiceResponseDto = {
+
+    Object.assign(base, {
       id: faker.string.uuid(),
       slug: generateSlug(code),
       code,
@@ -78,9 +80,10 @@ export const ServiceFactory = {
       createdAt: new Date(),
       updatedAt: new Date(),
       items: [],
-    };
+      ...overrides,
+    });
 
-    return { ...base, ...overrides };
+    return base;
   },
 };
 

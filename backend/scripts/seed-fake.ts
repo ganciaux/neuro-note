@@ -3,7 +3,7 @@ import { AppDataSource } from '../src/data-source';
 import { Patient } from '../src/modules/patients/entities/patient.entity';
 import { User } from '../src/modules/users/entities/user.entity';
 import { Address } from '../src/modules/addresses/entities/address.entity';
-import { Service } from '../src/modules/services/entities/service.entity';
+import { Service, ServiceItem } from '../src/modules/services/entities/service.entity';
 import { ServiceFactory } from '../src/common/factories/service.factory';
 import { UserFactory } from '../src/common/factories/user.factory';
 import { PatientFactory } from '../src/common/factories/patient.factory';
@@ -17,6 +17,7 @@ async function seedFakeData() {
   const userRepo = AppDataSource.getRepository(User);
   const addressRepo = AppDataSource.getRepository(Address);
   const serviceRepo = AppDataSource.getRepository(Service);
+  const serviceItemsRepo = AppDataSource.getRepository(ServiceItem);
 
   // ======================
   // Clean
@@ -39,6 +40,7 @@ async function seedFakeData() {
   const users: User[] = [];
   const addresses: Address[] = [];
   const services: Service[] = [];
+  const serviceItems: ServiceItem[] = [];
 
   // ======================
   // PATIENTS
@@ -100,22 +102,28 @@ async function seedFakeData() {
 
     const service = ServiceFactory.makeEntity(undefined, itemsCount);
 
-    if (service.isBundle && service.items) {
-      for (let j = 0; j < service.items.length; j++) {
-        const linkedService = ServiceFactory.makeEntity();
-        services.push(linkedService);
-
-        service.items[j].service = linkedService;
-        service.items[j].serviceId = linkedService.id;
-        service.items[j].bundle = service;
-        service.items[j].bundleId = service.id;
-      }
-    }
-
     services.push(service);
   }
 
   await serviceRepo.save(services);
+
+  for (const service of services) {
+    if (service.isBundle && service.items) {
+      for (const item of service.items) {
+        const linkedService = ServiceFactory.makeEntity();
+        await serviceRepo.save(linkedService);
+
+        serviceItems.push(
+          serviceItemsRepo.create({
+            bundleId: service.id,
+            serviceId: linkedService.id,
+            quantity: item.quantity,
+          }),
+        );
+      }
+    }
+  }
+  await serviceItemsRepo.save(serviceItems);
 
   console.log(`✅ ${savedPatients.length} patients saved`);
   console.log(`✅ ${savedUsers.length} users saved`);
