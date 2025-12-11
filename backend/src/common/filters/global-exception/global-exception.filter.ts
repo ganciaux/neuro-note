@@ -10,6 +10,7 @@ import { Request, Response } from 'express';
 import { logError } from '../../../common/utils/log-error.util';
 import { v4 as uuidv4 } from 'uuid';
 import { appConfig } from '../../../config';
+import { ValidationError } from 'class-validator';
 
 interface ApiErrorResponse {
   type: string;
@@ -31,6 +32,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   }
 
   catch(exception: unknown, host: ArgumentsHost) {
+    console.log('Exception caught by GlobalExceptionFilter:', exception);
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
     const req = ctx.getRequest<Request>();
@@ -40,7 +42,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let title: string | object;
     let detail: any;
 
-    if (exception instanceof HttpException) {
+    if (Array.isArray(exception) && exception.every((e) => e instanceof ValidationError)) {
+      status = HttpStatus.BAD_REQUEST;
+      title = 'Validation error';
+      detail = exception.map((err) => {
+        const copy = { ...err };
+        delete copy.target;
+        return copy;
+      });
+    } else if (exception instanceof HttpException) {
       status = exception.getStatus();
       const response = exception.getResponse();
 

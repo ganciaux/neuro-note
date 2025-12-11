@@ -18,6 +18,8 @@ import { toDto } from '../utils/transform-to-dto';
 import { UsePermission } from '../decorators/use-permission.decorator';
 import { JwtAuthGuard } from '../../../src/modules/auth/guards/jwt-auth.guard';
 import { PermissionGuard } from '../guards/permission.guard';
+import { validateOrReject } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export abstract class BaseController<
@@ -26,6 +28,8 @@ export abstract class BaseController<
   CreateDto,
   UpdateDto,
 > {
+  protected abstract readonly createDtoClass: new () => CreateDto;
+  protected abstract readonly updateDtoClass: new () => UpdateDto;
   protected abstract readonly responseDtoClass: new () => ResponseDto;
   constructor(protected readonly service: BaseService<Entity, ResponseDto, CreateDto, UpdateDto>) {}
 
@@ -41,6 +45,8 @@ export abstract class BaseController<
   @Post()
   @UsePermission('create')
   async create(@Body() dto: CreateDto): Promise<ResponseDto> {
+    const instance = plainToInstance(this.createDtoClass, dto);
+    await validateOrReject(instance as object, { forbidUnknownValues: true });
     if (this.beforeCreate) await this.beforeCreate(dto);
     const result = await this.service.create(dto);
     if (this.afterCreate) await this.afterCreate(result as unknown as Entity);
@@ -69,6 +75,10 @@ export abstract class BaseController<
   @Get('search')
   @UsePermission('search')
   async search<FilterDto extends FilterOptionsDto>(@Query() query: FilterDto) {
+    /*
+    const instance = plainToInstance(query.constructor as new () => FilterDto, query);
+    await validateOrReject(instance, { forbidUnknownValues: true });
+    */
     const [entities, total] = await this.service.search(query);
 
     return {
@@ -110,6 +120,8 @@ export abstract class BaseController<
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateDto,
   ): Promise<ResponseDto> {
+    const instance = plainToInstance(this.updateDtoClass, dto);
+    await validateOrReject(instance as object, { forbidUnknownValues: true });
     if (this.beforeUpdate) await this.beforeUpdate(dto);
     await this.service.findOne(id);
     const result = await this.service.update(id, dto);

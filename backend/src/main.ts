@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception/global-exception.filter';
 import { appConfig } from './config';
 import { QueryParsePipe } from './common/pipe/query-parse.pipe';
+import { DebugPipe } from './common/pipe/debug.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +18,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new QueryParsePipe(),
+    new DebugPipe(),
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,

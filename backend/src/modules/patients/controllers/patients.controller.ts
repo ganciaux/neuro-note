@@ -20,6 +20,8 @@ export class PatientsController extends BaseController<
   CreatePatientDto,
   UpdatePatientDto
 > {
+  protected readonly createDtoClass = CreatePatientDto;
+  protected readonly updateDtoClass = UpdatePatientDto;
   protected readonly responseDtoClass = PatientResponseDto;
 
   protected static permissions: Record<

@@ -17,6 +17,8 @@ export class AddressesController extends BaseController<
   CreateAddressDto,
   UpdateAddressDto
 > {
+  protected readonly createDtoClass = CreateAddressDto;
+  protected readonly updateDtoClass = UpdateAddressDto;
   protected readonly responseDtoClass = AddressResponseDto;
 
   protected static permissions: Record<

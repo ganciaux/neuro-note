@@ -21,6 +21,8 @@ export class ServicesController extends BaseController<
   CreateServiceDto,
   UpdateServiceDto
 > {
+  protected readonly createDtoClass = CreateServiceDto;
+  protected readonly updateDtoClass = UpdateServiceDto;
   protected readonly responseDtoClass = ServiceResponseDto;
 
   protected static permissions: Record<

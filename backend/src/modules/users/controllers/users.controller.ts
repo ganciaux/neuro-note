@@ -17,6 +17,8 @@ export class UsersController extends BaseController<
   CreateUserDto,
   UpdateUserDto
 > {
+  protected readonly createDtoClass = CreateUserDto;
+  protected readonly updateDtoClass = UpdateUserDto;
   protected readonly responseDtoClass = UserResponseDto;
 
   protected static permissions: Record<
