@@ -9,7 +9,8 @@ import { PatientResponseDto } from '../../../src/modules/patients/dto/patient-re
 import { createServiceTestModule } from '../mocks/service-test-helper';
 import { sanitize } from '../../../src/common/utils/sanitize.utils';
 import { AddressesService } from '../../../src/modules/addresses/services/addresses.service';
-import { generateSlug } from '../../../src/common/utils/slug.util';
+import * as slugUtils from '../../../src/common/utils/slug.util';
+import { FIXED_SLUG, FIXED_UUID } from '../../utils/constants';
 
 describe('PatientsService Unit Tests', () => {
   let service: PatientsService;
@@ -25,6 +26,8 @@ describe('PatientsService Unit Tests', () => {
       { provide: AddressesService, useValue: AddressesService },
       { provide: AddressesRepository, useValue: addressesRepositoryMock },
     ]));
+
+    jest.spyOn(slugUtils, 'generatePatientSlug').mockReturnValue(FIXED_SLUG);
   });
 
   it('should be defined', () => {
@@ -34,20 +37,18 @@ describe('PatientsService Unit Tests', () => {
 
   it('should create a patient successfully', async () => {
     const date = new Date();
-    const id = 'generated-uuid-123';
     const dto = PatientFactory.makeCreateDto();
-    const slug = generateSlug(`${dto.firstName}-${dto.lastName}`);
     const expectedSearchName = sanitize(`${dto.firstName}${dto.lastName}`);
 
     const entityForCreate = PatientFactory.makeEntityForCreate({
       ...dto,
-      slug,
+      slug: FIXED_SLUG,
       searchName: expectedSearchName,
     });
 
     const savedEntity = PatientFactory.makeEntity({
       ...entityForCreate,
-      id,
+      id: FIXED_UUID,
       createdAt: date,
       updatedAt: date,
     });
@@ -61,20 +62,19 @@ describe('PatientsService Unit Tests', () => {
     expect(patientRepositoryMock.save).toHaveBeenCalledWith(
       expect.objectContaining({
         ...dto,
-        slug,
+        slug: FIXED_SLUG,
         searchName: expectedSearchName,
       }),
     );
 
-    expect(result.id).toBe(id);
+    expect(result.id).toBe(FIXED_UUID);
     expect(result.email).toBe(dto.email);
     expect(result).toEqual(toDto(PatientResponseDto, savedEntity));
   });
 
   it('should update a patient successfully', async () => {
-    const id = 'generated-uuid-123';
     const dto = PatientFactory.makeUpdateDto();
-    const existingEntity = PatientFactory.makeEntity({ id });
+    const existingEntity = PatientFactory.makeEntity({ id: FIXED_UUID });
 
     const savedEntity = {
       ...existingEntity,
@@ -84,16 +84,16 @@ describe('PatientsService Unit Tests', () => {
     (patientRepositoryMock.findOne as jest.Mock).mockResolvedValue(existingEntity);
     (patientRepositoryMock.save as jest.Mock).mockResolvedValue(savedEntity);
 
-    const result = await service.update(id, dto);
+    const result = await service.update(FIXED_UUID, dto);
 
     expect(patientRepositoryMock.findOne).toHaveBeenCalledWith({
-      where: { id },
+      where: { id: FIXED_UUID },
     });
 
     expect(patientRepositoryMock.save).toHaveBeenCalledWith(
       expect.objectContaining({
         ...dto,
-        id,
+        id: FIXED_UUID,
       }),
     );
 

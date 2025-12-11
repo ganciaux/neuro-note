@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Service, ServiceItem } from '../entities/service.entity';
-import { CreateServiceDto } from '../dto/create-service.dto';
 
 @Injectable()
 export class ServicesRepository extends Repository<Service> {
@@ -14,24 +13,12 @@ export class ServicesRepository extends Repository<Service> {
   }
 
   async findWithItems(serviceId: string): Promise<Service | null> {
-    return this.findOne({
+    const service = await this.findOne({
       where: { id: serviceId },
       relations: ['items', 'items.service', 'parentBundles'],
     });
-  }
 
-  async createBundleWithItems(dto: CreateServiceDto): Promise<Service | null> {
-    const service = await this.save(dto);
-
-    if (dto.isBundle && dto.items?.length) {
-      const items = dto.items.map((item) => ({
-        bundleId: service.id,
-        serviceId: item.serviceId,
-        quantity: item.quantity,
-      }));
-      await this.items.save(items);
-    }
-
-    return this.findWithItems(service.id);
+    if (!service) throw new NotFoundException(`Service #${serviceId} not found`);
+    return service;
   }
 }

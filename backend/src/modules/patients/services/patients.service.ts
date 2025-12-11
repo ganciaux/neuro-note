@@ -8,7 +8,7 @@ import { AddressesRepository } from '../../addresses/repositories/addresses.repo
 import { AddressesService } from '../../addresses/services/addresses.service';
 import { attachRelation } from '../../../common/utils/attach-relation.utils';
 import { BaseService } from '../../../common/base/base.service';
-import { generateSlug } from '../../../common/utils/slug.util';
+import { generatePatientSlug } from '../../../common/utils/slug.util';
 import { sanitize } from '../../../common/utils/sanitize.utils';
 
 @Injectable()
@@ -22,6 +22,7 @@ export class PatientsService extends BaseService<
   protected readonly idKey: keyof Patient = 'id';
   protected readonly entityLabel = 'Patient';
   protected alias = 'patient';
+  protected relations: string[];
 
   constructor(
     private readonly patientRepo: PatientsRepository,
@@ -31,9 +32,13 @@ export class PatientsService extends BaseService<
     super(patientRepo);
   }
 
-  private applyComputedFields(patient: Patient) {
-    patient.slug = generateSlug(patient.lastName);
+  protected async applyComputedFields(patient: Patient) {
+    patient.slug = generatePatientSlug({
+      firstName: patient.firstName,
+      lastName: patient.lastName,
+    });
     patient.searchName = sanitize(`${patient.firstName}${patient.lastName}`);
+    return Promise.resolve();
   }
 
   protected async extendEntity(patient: Patient): Promise<Patient> {
@@ -42,13 +47,5 @@ export class PatientsService extends BaseService<
 
   protected async beforeDelete(patient: Patient): Promise<void> {
     await this.addressService.deleteByEntity('address_entity_patient', patient.id);
-  }
-
-  protected async beforeCreate(patient: Patient): Promise<void> {
-    this.applyComputedFields(patient);
-  }
-
-  protected async beforeUpdate(patient: Patient): Promise<void> {
-    this.applyComputedFields(patient);
   }
 }

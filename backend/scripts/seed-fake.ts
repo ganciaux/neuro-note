@@ -110,7 +110,7 @@ async function seedFakeData() {
   for (const service of services) {
     if (service.isBundle && service.items) {
       for (const item of service.items) {
-        const linkedService = ServiceFactory.makeEntity();
+        const linkedService = ServiceFactory.makeEntity({ isBundle: false });
         await serviceRepo.save(linkedService);
 
         serviceItems.push(

@@ -7,7 +7,13 @@ import { UserFactory } from '../../../src/common/factories/user.factory';
 import { createUsersRepositoryMock } from '../mocks/user-repository.mock';
 import { UserResponseDto } from '../../../src/modules/users/dto/user-response.dto';
 import { toDto } from '../../../src/common/utils/transform-to-dto';
-import { generateSlug } from '../../../src/common/utils/slug.util';
+import {
+  FIXED_PASSWORD,
+  FIXED_PASSWORD_HASH,
+  FIXED_SLUG,
+  FIXED_USERNAME,
+  FIXED_UUID,
+} from '../../utils/constants';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn(),
@@ -34,24 +40,20 @@ describe('UsersService Unit Tests', () => {
   describe('create', () => {
     it('should create a user successfully', async () => {
       const date = new Date();
-      const id = 'generated-uuid-123';
-      const passwordHash = 'passwordHash';
-      const userName = 'createUser';
-      const slug = generateSlug(userName);
-      const dto = UserFactory.makeCreateDto({ userName });
+      const dto = UserFactory.makeCreateDto({ userName: FIXED_USERNAME });
       const entityForCreate = UserFactory.makeEntityForCreate({
         ...dto,
-        passwordHash,
-        slug,
+        passwordHash: FIXED_PASSWORD_HASH,
+        slug: FIXED_SLUG,
       });
       const savedEntity = UserFactory.makeEntity({
         ...entityForCreate,
-        id,
+        id: FIXED_UUID,
         createdAt: date,
         updatedAt: date,
       });
 
-      (bcrypt.hash as jest.Mock).mockResolvedValue(passwordHash);
+      (bcrypt.hash as jest.Mock).mockResolvedValue(FIXED_PASSWORD_HASH);
       (repositoryMock.findByEmail as jest.Mock).mockResolvedValue(null);
       (repositoryMock.create as jest.Mock).mockReturnValue(entityForCreate);
       (repositoryMock.save as jest.Mock).mockResolvedValue(savedEntity);
@@ -64,16 +66,16 @@ describe('UsersService Unit Tests', () => {
       expect(repositoryMock.save).toHaveBeenCalledWith(
         expect.objectContaining({
           ...dto,
-          passwordHash,
-          slug,
+          passwordHash: FIXED_PASSWORD_HASH,
+          slug: FIXED_SLUG,
         }),
       );
 
-      expect(result.id).toBe(id);
+      expect(result.id).toBe(FIXED_UUID);
       expect(result.email).toBe(dto.email);
       expect(result).not.toHaveProperty('password');
       expect(result).not.toHaveProperty('passwordHash');
-      expect(result.slug).toBe(slug);
+      expect(result.slug).toBe(FIXED_SLUG);
       expect(result).toEqual(toDto(UserResponseDto, savedEntity));
     });
 
@@ -109,28 +111,24 @@ describe('UsersService Unit Tests', () => {
 
   describe('validatePassword', () => {
     it('should return true if password matches', async () => {
-      const password = 'password';
-      const passwordHash = 'passwordHash';
-      const user = UserFactory.makeEntity({ passwordHash });
+      const user = UserFactory.makeEntity({ passwordHash: FIXED_PASSWORD_HASH });
 
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const result = await service.validatePassword(user, password);
+      const result = await service.validatePassword(user, FIXED_PASSWORD);
 
       expect(result).toBe(true);
-      expect(bcrypt.compare).toHaveBeenCalledWith(password, user.passwordHash);
+      expect(bcrypt.compare).toHaveBeenCalledWith(FIXED_PASSWORD, user.passwordHash);
     });
 
     it('should return false if password mismatch', async () => {
-      const password = 'password';
-      const passwordHash = 'passwordHash';
-      const user = UserFactory.makeEntity({ passwordHash });
+      const user = UserFactory.makeEntity({ passwordHash: FIXED_PASSWORD_HASH });
 
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      const result = await service.validatePassword(user, password);
+      const result = await service.validatePassword(user, FIXED_PASSWORD);
       expect(result).toBe(false);
-      expect(bcrypt.compare).toHaveBeenCalledWith(password, user.passwordHash);
+      expect(bcrypt.compare).toHaveBeenCalledWith(FIXED_PASSWORD, user.passwordHash);
     });
   });
 
@@ -150,8 +148,7 @@ describe('UsersService Unit Tests', () => {
 
   describe('findByEmailWithPassword', () => {
     it('should call repository', async () => {
-      const passwordHash = 'passwordHash';
-      const user = UserFactory.makeEntity({ passwordHash });
+      const user = UserFactory.makeEntity({ passwordHash: FIXED_PASSWORD_HASH });
       (repositoryMock.findByEmailWithPassword as jest.Mock).mockResolvedValue(user);
 
       const result = await service.findByEmailWithPassword(user.email);

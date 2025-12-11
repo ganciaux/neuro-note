@@ -13,3 +13,7 @@ export const generateUserSlug = (user: { firstName: string; lastName: string }):
 export const generatePatientSlug = (user: { firstName: string; lastName: string }): string => {
   return generateSlug(`${user.firstName}-${user.lastName}`);
 };
+
+export const generateServiceSlug = (code: string): string => {
+  return generateSlug(code);
+};

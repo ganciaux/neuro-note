@@ -8,6 +8,7 @@ import { setupIntegration } from '../setup-helper';
 import { UserFactory } from '../../../src/common/factories/user.factory';
 import { toDto } from '../../../src/common/utils/transform-to-dto';
 import { UserResponseDto } from '../../../src/modules/users/dto/user-response.dto';
+import { FIXED_EMAIL, FIXED_PASSWORD, FIXED_PASSWORD_ERROR } from '../../utils/constants';
 
 describe('Users Integration Test', () => {
   let usersRepository: UsersRepository;
@@ -58,7 +59,7 @@ describe('Users Integration Test', () => {
   });
 
   it('should throw conflict if email already exists', async () => {
-    const dto = UserFactory.makeCreateDto({ email: 'test@test.com' });
+    const dto = UserFactory.makeCreateDto({ email: FIXED_EMAIL });
 
     await usersService.create(dto);
 
@@ -90,39 +91,36 @@ describe('Users Integration Test', () => {
 
   describe('validatePassword', () => {
     it('returns true when password matches', async () => {
-      const password = 'secret123';
-
-      const dto = UserFactory.makeCreateDto({ password });
+      const dto = UserFactory.makeCreateDto({ password: FIXED_PASSWORD });
 
       const created = await usersService.create(dto);
       const userInDb = await usersRepository.findByEmailWithPassword(created.email);
 
-      const result = await usersService.validatePassword(userInDb!, password);
+      const result = await usersService.validatePassword(userInDb!, FIXED_PASSWORD);
 
       expect(result).toBe(true);
     });
 
     it('returns false when password does NOT match', async () => {
-      const password = 'secret123';
-      const dto = UserFactory.makeCreateDto({ password });
+      const dto = UserFactory.makeCreateDto({ password: FIXED_PASSWORD });
 
       const created = await usersService.create(dto);
       const userInDb = await usersRepository.findByEmailWithPassword(created.email);
 
-      const result = await usersService.validatePassword(userInDb!, 'wrongpass');
+      const result = await usersService.validatePassword(userInDb!, FIXED_PASSWORD_ERROR);
 
       expect(result).toBe(false);
     });
 
     it('throws when passwordHash is missing', async () => {
-      const password = 'secret123';
-
-      const dto = UserFactory.makeCreateDto({ password });
+      const dto = UserFactory.makeCreateDto({ password: FIXED_PASSWORD });
 
       const created = await usersService.create(dto);
       const userInDb = await usersRepository.findOneBy({ id: created.id });
 
-      await expect(usersService.validatePassword(userInDb, 'xxx')).rejects.toThrow(Error);
+      await expect(usersService.validatePassword(userInDb!, FIXED_PASSWORD_ERROR)).rejects.toThrow(
+        Error,
+      );
     });
   });
 });

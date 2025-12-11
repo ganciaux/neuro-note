@@ -1,9 +1,18 @@
-import { Repository, ObjectLiteral, FindOptionsWhere, DeepPartial, Not, IsNull } from 'typeorm';
+import {
+  Repository,
+  ObjectLiteral,
+  FindOptionsWhere,
+  DeepPartial,
+  Not,
+  IsNull,
+  EntityManager,
+} from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { toDto, toDtoArray } from '../utils/transform-to-dto';
 import { CatchTypeOrmError } from '../decorators/catch-typeorm-error.decorator';
 import { FilterOptionsDto } from '../query-filters/filter-options.dto';
 import { applyQuery } from '../query-filters/filter-apply';
+import { SelectQueryBuilder } from 'typeorm/browser';
 
 export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, CreateDto, UpdateDto> {
   protected abstract readonly responseDtoClass: new () => ResponseDto;
@@ -19,6 +28,10 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
   }
 
   protected async afterCreate(_entity: Entity): Promise<void> {
+    return Promise.resolve();
+  }
+
+  protected async afterCreateWithRelations(_entity: Entity): Promise<void> {
     return Promise.resolve();
   }
 
@@ -42,12 +55,54 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
     return Promise.resolve(entity);
   }
 
+  protected async applyComputedFields(entity: Entity, dto?: CreateDto | UpdateDto): Promise<void> {
+    return Promise.resolve();
+  }
+
+  protected async createRelations(
+    entity: Entity,
+    dto: CreateDto,
+    manager: EntityManager,
+  ): Promise<Partial<Entity>> {
+    return Promise.resolve({});
+  }
+
+  applyNestedRelations(
+    qb: SelectQueryBuilder<any>,
+    alias: string,
+    includeRelations: string[],
+    allowedRelations: string[],
+  ) {
+    includeRelations
+      .filter((relation) => {
+        const root = relation.split('.')[0];
+        return allowedRelations.includes(root);
+      })
+      .forEach((relation) => {
+        const parts = relation.split('.');
+        let parentAlias = alias;
+
+        parts.forEach((part, index) => {
+          const currentAlias = parts.slice(0, index + 1).join('_');
+          const joinPath = `${parentAlias}.${part}`;
+
+          const alreadyExists = qb.expressionMap.joinAttributes.some(
+            (j) => j.alias?.name === currentAlias,
+          );
+
+          if (!alreadyExists) {
+            qb.leftJoinAndSelect(joinPath, currentAlias);
+          }
+
+          parentAlias = currentAlias;
+        });
+      });
+  }
+
   async findAll(includeRelations: string[] = []): Promise<ResponseDto[]> {
     const qb = this.repository.createQueryBuilder(this.alias);
 
-    includeRelations
-      .filter((r) => this.relations.includes(r))
-      .forEach((relation) => qb.leftJoinAndSelect(`${this.alias}.${relation}`, relation));
+    this.applyNestedRelations(qb, this.alias, includeRelations, this.relations);
 
     const entities = await qb.getMany();
     return toDtoArray(this.responseDtoClass, entities);
@@ -72,9 +127,7 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
       .createQueryBuilder(this.alias)
       .where(`${this.alias}.${this.idKey} = :id`, { id });
 
-    includeRelations
-      .filter((r) => this.relations.includes(r))
-      .forEach((relation) => qb.leftJoinAndSelect(`${this.alias}.${relation}`, relation));
+    this.applyNestedRelations(qb, this.alias, includeRelations, this.relations);
 
     const entity = await qb.getOne();
     if (!entity) throw new NotFoundException(`${this.entityLabel} #${id} not found`);
@@ -85,9 +138,37 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
   async create(dto: CreateDto): Promise<ResponseDto> {
     await this.beforeCreate(dto);
     const entity = this.repository.create(dto as unknown as DeepPartial<Entity>);
+    await this.applyComputedFields(entity);
     const saved = await this.repository.save(entity);
     await this.afterCreate(saved);
     return toDto(this.responseDtoClass, saved);
+  }
+
+  @CatchTypeOrmError()
+  async createWithRelations(dto: CreateDto): Promise<ResponseDto> {
+    return this.repository.manager.transaction(async (manager) => {
+      await this.beforeCreate(dto);
+
+      const entity = this.repository.create(dto as unknown as DeepPartial<Entity>);
+
+      await this.applyComputedFields(entity);
+
+      const saved = await manager.save(entity);
+
+      await this.afterCreate(saved);
+
+      console.log('saved (before relation)', saved);
+
+      const relations = await this.createRelations(saved, dto, manager);
+
+      if (relations) {
+        Object.assign(saved, relations);
+      }
+
+      await this.afterCreateWithRelations(saved);
+
+      return toDto(this.responseDtoClass, saved);
+    });
   }
 
   @CatchTypeOrmError()
@@ -100,6 +181,9 @@ export abstract class BaseService<Entity extends ObjectLiteral, ResponseDto, Cre
     await this.beforeUpdate(entity, dto);
 
     Object.assign(entity, dto);
+
+    await this.applyComputedFields(entity);
+
     const saved = await this.repository.save(entity);
 
     await this.afterUpdate(saved);

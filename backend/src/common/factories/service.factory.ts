@@ -3,7 +3,7 @@ import { Service, ServiceItem } from '../../modules/services/entities/service.en
 import { CreateServiceDto } from '../../modules/services/dto/create-service.dto';
 import { UpdateServiceDto } from '../../modules/services/dto/update-service.dto';
 import { ServiceResponseDto } from '../../modules/services/dto/service-response.dto';
-import { generateSlug } from '../utils/slug.util';
+import { generateServiceSlug } from '../utils/slug.util';
 import { SERVICE_CATEGORY } from './enum-values';
 
 export const ServiceFactory = {
@@ -20,7 +20,7 @@ export const ServiceFactory = {
     base.createdAt = new Date();
     base.updatedAt = new Date();
     base.deletedAt = undefined;
-    base.slug = generateSlug(base.code);
+    base.slug = generateServiceSlug(base.code);
 
     if (base.isBundle && itemsCount > 0) {
       base.items = Array.from({ length: itemsCount }).map(() =>
@@ -69,7 +69,7 @@ export const ServiceFactory = {
 
     Object.assign(base, {
       id: faker.string.uuid(),
-      slug: generateSlug(code),
+      slug: generateServiceSlug(code),
       code,
       labelInternal: faker.commerce.productName(),
       labelInvoice: faker.commerce.productName(),

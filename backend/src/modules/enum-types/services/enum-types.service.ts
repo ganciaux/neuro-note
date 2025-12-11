@@ -18,6 +18,7 @@ export class EnumTypesService extends BaseService<
   protected readonly idKey: keyof EnumType = 'id';
   protected readonly entityLabel = 'EnumType';
   protected alias = 'enum_type';
+  protected relations: string[];
 
   constructor(private readonly enumRepo: EnumTypesRepository) {
     super(enumRepo);

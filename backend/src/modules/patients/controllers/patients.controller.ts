@@ -9,6 +9,9 @@ import { PatientsService } from '../services/patients.service';
 import { FilterPatientDto } from '../dto/filter-patient.dto';
 import { JwtUser } from '../../../modules/auth/models';
 import { PermissionActions } from '../../../common/types/permissions.types';
+import { UsePermission } from '../../../common/decorators/use-permission.decorator';
+
+export type PatientPermissionActions = PermissionActions | 'findOneExtended';
 
 @Controller('patients')
 export class PatientsController extends BaseController<
@@ -33,6 +36,7 @@ export class PatientsController extends BaseController<
     findOne: (user: JwtUser) => false,
     update: (user: JwtUser) => false,
     delete: (user: JwtUser) => false,
+    findOneExtended: (user: JwtUser) => true,
   };
 
   constructor(private readonly patientsService: PatientsService) {
@@ -40,6 +44,7 @@ export class PatientsController extends BaseController<
   }
 
   @Get('details/:id')
+  @UsePermission('findOneExtended')
   findOneExtended(@Param('id', new ParseUUIDPipe()) id: string): Promise<PatientResponseDto> {
     return this.patientsService.findOneExtended(id);
   }
