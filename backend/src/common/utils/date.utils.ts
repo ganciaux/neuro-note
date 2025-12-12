@@ -10,7 +10,9 @@ export const fakerDateTime = (): Date => {
   return new Date(d.toISOString());
 };
 
-export const formatDateOnly = (date?: Date | null): string | null => {
+export const formatDateOnly = (date?: Date | string | null): string | null => {
   if (!date) return null;
-  return date.toISOString().split('T')[0];
+  const d = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(d.getTime())) return null;
+  return d.toISOString().split('T')[0];
 };

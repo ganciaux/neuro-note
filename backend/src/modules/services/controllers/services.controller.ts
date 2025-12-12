@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { ServicesService } from '../services/services.service';
 import { BaseController } from '../../../common/base/base.controller';
 import { Service } from '../entities/service.entity';
-import { UpdateServiceDto } from '../dto/update-service.dto';
+import { UpdateBundleItemsDto, UpdateServiceDto } from '../dto/update-service.dto';
 import { CreateServiceDto } from '../dto/create-service.dto';
 import { PermissionActions } from '../../../common/types/permissions.types';
 import { JwtUser } from '../../../modules/auth/models';
@@ -11,8 +11,9 @@ import { UsePermission } from '../../../common/decorators/use-permission.decorat
 
 export type ServicePermissionActions =
   | PermissionActions
+  | 'findOneExtended'
   | 'createBundleWithItems'
-  | 'findOneExtended';
+  | 'updateBundleWithItems';
 
 @Controller('services')
 export class ServicesController extends BaseController<
@@ -28,20 +29,7 @@ export class ServicesController extends BaseController<
   protected static permissions: Record<
     ServicePermissionActions,
     (user: JwtUser, request?: any) => boolean
-  > = {
-    create: (user: JwtUser) => false,
-    findAll: (user: JwtUser) => true,
-    count: (user: JwtUser) => false,
-    findDeleted: (user: JwtUser) => false,
-    search: (user: JwtUser) => false,
-    softDelete: (user: JwtUser) => false,
-    restore: (user: JwtUser) => false,
-    findOne: (user: JwtUser) => true,
-    update: (user: JwtUser) => false,
-    delete: (user: JwtUser) => false,
-    createBundleWithItems: (user: JwtUser) => true,
-    findOneExtended: (user: JwtUser) => true,
-  };
+  >;
 
   constructor(private readonly servicesService: ServicesService) {
     super(servicesService);
@@ -58,7 +46,15 @@ export class ServicesController extends BaseController<
   async createBundleWithItems(
     @Body() createServiceDto: CreateServiceDto,
   ): Promise<ServiceResponseDto> {
-    console.log('Creating service bundle with items:', createServiceDto);
     return this.servicesService.createBundleWithItems(createServiceDto);
+  }
+
+  @Patch('bundle-with-items/:id')
+  @UsePermission('updateBundleWithItems')
+  async updateBundleWithItems(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() bundleItemDto: UpdateBundleItemsDto,
+  ): Promise<ServiceResponseDto> {
+    return this.servicesService.updateBundleItems(id, bundleItemDto);
   }
 }

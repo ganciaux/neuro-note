@@ -9,6 +9,9 @@ import { AddressesService } from '../services/addresses.service';
 import { FilterAddressDto } from '../dto/filter-address.dto';
 import { JwtUser } from '../../../modules/auth/models';
 import { PermissionActions } from '../../../common/types/permissions.types';
+import { UsePermission } from '../../../common/decorators/use-permission.decorator';
+
+export type AddressPermissionActions = PermissionActions | 'searchAddresses';
 
 @Controller('addresses')
 export class AddressesController extends BaseController<
@@ -24,24 +27,14 @@ export class AddressesController extends BaseController<
   protected static permissions: Record<
     PermissionActions,
     (user: JwtUser, request?: any) => boolean
-  > = {
-    create: (user: JwtUser) => false,
-    findAll: (user: JwtUser) => false,
-    count: (user: JwtUser) => false,
-    findDeleted: (user: JwtUser) => false,
-    search: (user: JwtUser) => false,
-    softDelete: (user: JwtUser) => false,
-    restore: (user: JwtUser) => false,
-    findOne: (user: JwtUser) => false,
-    update: (user: JwtUser) => false,
-    delete: (user: JwtUser) => false,
-  };
+  >;
 
   constructor(private readonly addressesService: AddressesService) {
     super(addressesService);
   }
 
   @Get('search')
+  @UsePermission('searchAddresses')
   async searchAddresses(@Query() query: FilterAddressDto) {
     const [entities, total] = await this.addressesService.search(query);
     return {

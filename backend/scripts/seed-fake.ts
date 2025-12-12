@@ -8,7 +8,7 @@ import { ServiceFactory } from '../src/common/factories/service.factory';
 import { UserFactory } from '../src/common/factories/user.factory';
 import { PatientFactory } from '../src/common/factories/patient.factory';
 import { AddressFactory } from '../src/common/factories/address.factory';
-import { ADDRESS_ENTITY } from '../src/common/factories/enum-values';
+import { ADDRESS_ENTITY, USER_ROLES } from '../src/common/factories/enum-values';
 
 async function seedFakeData() {
   await AppDataSource.initialize();
@@ -29,10 +29,10 @@ async function seedFakeData() {
 
   console.log('🗑️ delete addresses, users, services and patients');
 
-  const MAX_USER = 5;
-  const MAX_PATIENT = 20;
-  const MAX_ADDRESSES_PATIENT = 5;
-  const MAX_ADDRESSES_USER = 5;
+  const MAX_USER = 3;
+  const MAX_PATIENT = 10;
+  const MAX_ADDRESSES_PATIENT = 3;
+  const MAX_ADDRESSES_USER = 1;
   const MAX_SERVICES = 20;
   const MAX_SERVICE_ITEMS_BUNDLE = 5;
 
@@ -69,6 +69,20 @@ async function seedFakeData() {
   // ======================
   // USERS
   // ======================
+  const userAdmin = userRepo.create(
+    UserFactory.makeEntityForCreate(
+      {
+        email: 'admin@admin.com',
+        firstName: 'admin',
+        lastName: 'admin',
+        userName: 'admin',
+        roleCode: USER_ROLES.ADMIN,
+      },
+      'Admin.123',
+    ),
+  );
+  users.push(userAdmin);
+
   for (let i = 0; i < MAX_USER; i++) {
     const user = userRepo.create(UserFactory.makeEntityForCreate());
     users.push(user);

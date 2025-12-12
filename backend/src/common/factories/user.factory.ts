@@ -9,11 +9,11 @@ import { USER_ROLES } from './enum-values';
 import { makeFakeEmail } from './email.factory';
 
 export const UserFactory = {
-  makeEntity: (overrides?: Partial<User>): User => {
+  makeEntity: (overrides?: Partial<User>, passwordOverride?: string): User => {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const userName = faker.internet.username();
-    const password = faker.internet.password();
+    const password = passwordOverride ?? faker.internet.password();
     const passwordHash: string = bcrypt.hashSync(password, 10);
 
     const base: User = {
@@ -42,11 +42,12 @@ export const UserFactory = {
 
   makeEntityForCreate: (
     overrides?: Partial<User>,
+    passwordOverride?: string,
   ): Omit<User, 'id' | 'createdAt' | 'updatedAt'> => {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const userName = faker.internet.username();
-    const password = faker.internet.password();
+    const password = passwordOverride ?? faker.internet.password();
     const passwordHash: string = bcrypt.hashSync(password, 10);
 
     const base = {

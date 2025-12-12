@@ -11,7 +11,7 @@ import { JwtUser } from '../../../modules/auth/models';
 import { PermissionActions } from '../../../common/types/permissions.types';
 import { UsePermission } from '../../../common/decorators/use-permission.decorator';
 
-export type PatientPermissionActions = PermissionActions | 'findOneExtended';
+export type PatientPermissionActions = PermissionActions | 'findOneExtended' | 'searchPatients';
 
 @Controller('patients')
 export class PatientsController extends BaseController<
@@ -25,21 +25,9 @@ export class PatientsController extends BaseController<
   protected readonly responseDtoClass = PatientResponseDto;
 
   protected static permissions: Record<
-    PermissionActions,
+    PatientPermissionActions,
     (user: JwtUser, request?: any) => boolean
-  > = {
-    create: (user: JwtUser) => true,
-    findAll: (user: JwtUser) => true,
-    count: (user: JwtUser) => false,
-    findDeleted: (user: JwtUser) => false,
-    search: (user: JwtUser) => false,
-    softDelete: (user: JwtUser) => false,
-    restore: (user: JwtUser) => false,
-    findOne: (user: JwtUser) => false,
-    update: (user: JwtUser) => false,
-    delete: (user: JwtUser) => false,
-    findOneExtended: (user: JwtUser) => true,
-  };
+  >;
 
   constructor(private readonly patientsService: PatientsService) {
     super(patientsService);
@@ -52,6 +40,7 @@ export class PatientsController extends BaseController<
   }
 
   @Get('search')
+  @UsePermission('searchPatients')
   async searchPatients(@Query() query: FilterPatientDto) {
     const [entities, total] = await this.patientsService.search(query);
     return {
