@@ -8,7 +8,10 @@ import { ServiceFactory } from '../src/common/factories/service.factory';
 import { UserFactory } from '../src/common/factories/user.factory';
 import { PatientFactory } from '../src/common/factories/patient.factory';
 import { AddressFactory } from '../src/common/factories/address.factory';
-import { ADDRESS_ENTITY, USER_ROLES } from '../src/common/factories/enum-values';
+import { ADDRESS_ENTITY, REFERENCE_COUNTER, USER_ROLES } from '../src/common/factories/enum-values';
+import { ReferenceCounter } from '../src/common/reference-counter/reference-counter.entity';
+import { ReferenceCounterService } from '../src/common/reference-counter/reference-counter.service';
+import { EnumType } from '../src/modules/enum-types/entities/enum-type.entity';
 
 async function seedFakeData() {
   await AppDataSource.initialize();
@@ -18,6 +21,14 @@ async function seedFakeData() {
   const addressRepo = AppDataSource.getRepository(Address);
   const serviceRepo = AppDataSource.getRepository(Service);
   const serviceItemsRepo = AppDataSource.getRepository(ServiceItem);
+  const referenceCounterRepo = AppDataSource.getRepository(ReferenceCounter);
+  const enumRepo = AppDataSource.getRepository(EnumType);
+
+  const referenceCounterService = new ReferenceCounterService(
+    referenceCounterRepo,
+    enumRepo,
+    AppDataSource,
+  );
 
   // ======================
   // Clean
@@ -25,6 +36,7 @@ async function seedFakeData() {
   await addressRepo.clear();
   await userRepo.clear();
   await patientRepo.clear();
+  await referenceCounterRepo.clear();
   await serviceRepo.query(`TRUNCATE TABLE "services" CASCADE;`);
 
   console.log('🗑️ delete addresses, users, services and patients');
@@ -35,12 +47,25 @@ async function seedFakeData() {
   const MAX_ADDRESSES_USER = 1;
   const MAX_SERVICES = 20;
   const MAX_SERVICE_ITEMS_BUNDLE = 5;
+  const MAX_REFERENCE_COUNTER = 5;
 
   const patients: Patient[] = [];
   const users: User[] = [];
   const addresses: Address[] = [];
   const services: Service[] = [];
   const serviceItems: ServiceItem[] = [];
+
+  // ======================
+  // REFERENCE COUNTERS
+  // ======================
+  const year = new Date().getFullYear();
+
+  for (let i = year - MAX_REFERENCE_COUNTER; i < year; i++) {
+    const billRef = referenceCounterService.getNext(REFERENCE_COUNTER.BILL, i);
+    console.log('fake bill ref: ', billRef);
+    const paymentRef = referenceCounterService.getNext(REFERENCE_COUNTER.PAYMENT, i);
+    console.log('fake payment ref: ', paymentRef);
+  }
 
   // ======================
   // PATIENTS

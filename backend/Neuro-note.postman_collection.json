@@ -74,7 +74,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ghislain5@anciaux.fr\",\n    \"password\":\"12345678\"\n}",
+							"raw": "{\n    \"email\": \"{{admin_email}}\",\n    \"password\":\"{{admin_password}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -95,6 +95,50 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();",
+									"",
+									"pm.environment.set(\"jwt\", res.accessToken);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ghislain@anciaux.fr\",\n    \"password\":\"12345678\",\n    \"lastName\":\"anciaux\",\n    \"firstName\":\"Ghislain\",\n    \"userName\":\"ganciaux\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/auth/register",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -103,12 +147,39 @@
 			"item": [
 				{
 					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();\r",
+									"\r",
+									"if (res && res.id) {\r",
+									"    pm.environment.set(\"patient_uuid\", res.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"titleCode\": \"patient_title_mr\",\n    \"firstName\": \"John\",\n    \"lastName\": \"fffff\",\n    \"birthDate\": \"1990-04-12T00:00:00.000Z\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"1234\"\n}",
+							"raw": "{\n    \"titleCode\": \"patient_title_mr\",\n    \"firstName\": \"John\",\n    \"lastName\": \"fffff\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"1234\",\n    \"birthDate\":\"2000-1-1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -132,11 +203,21 @@
 				{
 					"name": "soft-delete by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -162,11 +243,21 @@
 				{
 					"name": "restore by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -192,11 +283,21 @@
 				{
 					"name": "update",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ghislain@anciaux.fr\",\n    \"firstName\": \"sdgsdg\",\n    \"lastName\": \"xfgdsfgdsfh\"\n}",
+							"raw": "{\n    \"firstName\": \"sdgsdg\",\n    \"lastName\": \"xfgdsfgdsfh\",\n    \"titleCode\": \"patient_title_mr\",\n    \"birthDate\": \"2000-01-01\",\n    \"phone\": \"1234\",\n    \"email\": \"ghislain@anciaux.fr\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -234,6 +335,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -279,6 +390,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -324,6 +445,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -360,13 +491,13 @@
 								"exec": [
 									"let res = pm.response.json();",
 									"",
-									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
 									"if (Array.isArray(res) && res.length > 0) {",
 									"    pm.environment.set(\"patient_uuid\", res[0].id);",
 									"}"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -374,6 +505,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -402,6 +543,16 @@
 				{
 					"name": "search",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -468,6 +619,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -513,6 +674,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -546,12 +717,39 @@
 			"item": [
 				{
 					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();\r",
+									"\r",
+									"if (res && res.id) {\r",
+									"    pm.environment.set(\"user_uuid\", res.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ghislain5@anciaux.fr\",\n    \"password\":\"12345678\",\n    \"fullName\": \"Admin User\",\n    \"roleCode\": \"user_role_admin\"\n}",
+							"raw": "{\n    \"email\": \"ghislain5@anciaux.fr\",\n    \"password\":\"12345678\",\n    \"firstName\": \"Admin\",\n    \"lastName\": \"Admin\",\n    \"roleCode\": \"user_role_admin\",\n    \"userName\":\"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -575,11 +773,21 @@
 				{
 					"name": "soft-delete by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -605,11 +813,21 @@
 				{
 					"name": "restore by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -635,11 +853,21 @@
 				{
 					"name": "update",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ghislain10@anciaux.fr\",\n    \"password\":\"12345678\"\n}",
+							"raw": "{\n    \"email\": \"ghislain10@anciaux.fr\",\n    \"password\":\"12345678\",\n    \"firstName\": \"Admin\",\n    \"lastName\": \"Admin\",\n    \"roleCode\": \"user_role_staff\",\n    \"userName\":\"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -671,11 +899,22 @@
 									""
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -721,6 +960,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -756,7 +1005,6 @@
 								"exec": [
 									"let res = pm.response.json();",
 									"",
-									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
 									"if (Array.isArray(res) && res.length > 0) {",
 									"    pm.environment.set(\"user_uuid\", res[0].id);",
 									"}"
@@ -771,6 +1019,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -815,6 +1073,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -827,7 +1095,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}:{{port}}/{{api}}/users/search",
+							"raw": "{{url}}:{{port}}/{{api}}/users/search?lastName[operator]=eq&lastName[value]=admin",
 							"host": [
 								"{{url}}"
 							],
@@ -836,6 +1104,16 @@
 								"{{api}}",
 								"users",
 								"search"
+							],
+							"query": [
+								{
+									"key": "lastName[operator]",
+									"value": "eq"
+								},
+								{
+									"key": "lastName[value]",
+									"value": "admin"
+								}
 							]
 						}
 					},
@@ -860,6 +1138,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -905,6 +1193,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -938,12 +1236,39 @@
 			"item": [
 				{
 					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();\r",
+									"\r",
+									"if (res && res.id) {\r",
+									"    pm.environment.set(\"address_uuid\", res.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patient\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -967,11 +1292,21 @@
 				{
 					"name": "soft-delete by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -997,11 +1332,21 @@
 				{
 					"name": "restore by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"label\":\"my address\",\n    \"entityType\": \"address_entity_patien\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1027,11 +1372,21 @@
 				{
 					"name": "update",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"label\":\"my address 3\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street 2\",\n    \"postalCode\":\"542600\",\n    \"city\":\"city2\",\n    \"countryCode\":\"address_country_lu\"\n}",
+							"raw": "{\n    \"label\":\"my address update\",\n    \"entityType\": \"address_entity_patient\",\n    \"entityId\":\"{{patient_uuid}}\",\n    \"typeCode\": \"address_type_home\",\n    \"street\": \"street\",\n    \"postalCode\":\"54260\",\n    \"city\":\"city\",\n    \"countryCode\":\"address_country_fr\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1069,6 +1424,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -1114,6 +1479,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1149,7 +1524,6 @@
 								"exec": [
 									"let res = pm.response.json();",
 									"",
-									"// Vérifier que c'est bien un tableau et qu'il y a au moins un élément",
 									"if (Array.isArray(res) && res.length > 0) {",
 									"    pm.environment.set(\"address_uuid\", res[0].id);",
 									"}"
@@ -1164,6 +1538,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1208,6 +1592,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1253,6 +1647,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1298,6 +1702,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1345,6 +1759,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1378,6 +1802,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1420,7 +1854,8 @@
 									"}"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1428,6 +1863,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1448,6 +1893,344 @@
 							"path": [
 								"{{api}}",
 								"enums"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service",
+			"item": [
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();\r",
+									"\r",
+									"if (res && res.id) {\r",
+									"    pm.environment.set(\"service_uuid\", res.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"my service ex\",\r\n    \"labelInternal\": \"my label\",\r\n    \"labelInvoice\": \"my label\",\r\n    \"price\": 123,\r\n    \"categoryCode\": \"service_category_consult\",\r\n    \"isBundle\": false,\r\n    \"isActive\": true,\r\n    \"items\": [\r\n        {\r\n            \"serviceId\": \"{{service_item1_uuid}}\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"serviceId\": \"{{service_item2_uuid}}\",\r\n            \"quantity\": 20\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/services",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"my service ex\",\n    \"labelInternal\": \"my label2\",\n    \"labelInvoice\": \"my label2\",\n    \"price\": 123,\n    \"categoryCode\": \"service_category_consult\",\n    \"isBundle\": false,\n    \"isActive\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/services/{{service_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"services",
+								"{{service_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update with items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"delete\": [\r\n        \"a974717a-b914-4499-bd90-aea45084cab9\"\r\n    ],\r\n    \"add\": [\r\n        {\"serviceId\":\"09270690-4ead-4ece-82fe-67984600de11\", \"quantity\":1}\r\n    ],\r\n    \"update\": [\r\n        {\"serviceId\":\"09270690-4ead-4ece-82fe-67984600de10\", \"quantity\":10}\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/services/bundle-with-items/{{bundle_id}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"services",
+								"bundle-with-items",
+								"{{bundle_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/services/{{service_uuid}}?include=items,parentBundles",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"services",
+								"{{service_uuid}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "items,parentBundles"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();\r",
+									"\r",
+									"if (Array.isArray(res) && res.length > 0) {\r",
+									"    pm.environment.set(\"service_uuid\", res[0].id);\r",
+									"}\r",
+									"\r",
+									"if (Array.isArray(res) && res.length >= 3) {\r",
+									"    pm.environment.set(\"service_item1_uuid\", res[1].id);\r",
+									"    pm.environment.set(\"service_item2_uuid\", res[2].id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/services?include=items,parentBundles,items.service",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"services"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "items,parentBundles,items.service"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}:{{port}}/{{api}}/services/details/{{service_uuid}}",
+							"host": [
+								"{{url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{api}}",
+								"services",
+								"details",
+								"{{service_uuid}}"
 							]
 						}
 					},

@@ -15,7 +15,9 @@ INSERT INTO enum_types(type, code, short_code, label) VALUES
 ('address_country', 'address_country_fr', 'fr', 'France'),
 ('address_country', 'address_country_be', 'be', 'Belgique'),
 ('service_category', 'service_category_consult', 'consult', 'Consultation'),
-('service_category', 'service_category_bilan', 'bilan', 'Bilan');
+('service_category', 'service_category_bilan', 'bilan', 'Bilan'),
+('reference_counter', 'reference_counter_payment', 'payment', 'Paiment'),
+('reference_counter', 'reference_counter_bill', 'bill', 'Facture');
 
 -- ============================================
 -- ENTITY MAPPING

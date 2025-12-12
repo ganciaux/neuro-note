@@ -29,3 +29,8 @@ export const SERVICE_CATEGORY = {
   CONSULT: 'service_category_consult',
   BILAN: 'service_category_bilan',
 } as const;
+
+export const REFERENCE_COUNTER = {
+  BILL: 'reference_counter_bill',
+  PAYMENT: 'reference_counter_payment',
+} as const;

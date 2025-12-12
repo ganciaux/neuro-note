@@ -102,3 +102,13 @@ CREATE TABLE service_items (
   quantity INT DEFAULT 1,
   PRIMARY KEY (bundle_id, service_id)
 );
+
+-- ============================================
+-- REFERENCE COUNTER
+-- ============================================
+CREATE TABLE reference_counters ( 
+  id SERIAL PRIMARY KEY, 
+  entity_type VARCHAR(128) REFERENCES enum_types(code),
+  year INT NOT NULL, 
+  counter INT DEFAULT 0, 
+  UNIQUE (entity_type, year) );
